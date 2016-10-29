@@ -37,5 +37,21 @@
   "license": "MIT",
   "directories": {
     "test": "test"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pladaria/degiro.git"
+  },
+  "keywords": [
+    "degiro",
+    "api",
+    "client",
+    "stock",
+    "market",
+    "broker"
+  ],
+  "bugs": {
+    "url": "https://github.com/pladaria/degiro/issues"
+  },
+  "homepage": "https://github.com/pladaria/degiro#readme"
 }
