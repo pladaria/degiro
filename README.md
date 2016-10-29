@@ -1,6 +1,6 @@
 # degiro
 
-DEGIRO (unnoficial) API
+DeGiro (unnoficial) API Client
 
 ## Install
 
@@ -8,7 +8,7 @@ DEGIRO (unnoficial) API
 
 ## Example
 
-tbd
+Work  in progress...
 
 ## License
 

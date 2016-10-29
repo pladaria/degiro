@@ -1,38 +1,21 @@
 {
   "name": "degiro",
   "version": "0.0.0",
-  "description": "DEGIRO (unnoficial) API",
-  "main": "dist/index.js",
+  "description": "DeGiro (unnoficial) API",
+  "main": "src/index.js",
   "author": "Pedro Ladaria <pedro.ladaria@gmail.com>",
   "scripts": {
     "lint": "eslint ./src",
-    "test": "nyc --reporter=lcov ava --verbose test/test.js",
-    "report": "nyc report --reporter=html && opn coverage/index.html",
-    "clean": "rimraf dist coverage .nyc_output",
-    "build": "babel src --out-dir dist",
-    "prepublish": "npm run lint && npm test && npm run build",
-    "coveralls": "cat ./coverage/lcov.ok | ./node_modules/.bin/coveralls"
+    "test": "echo 'no tests'"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "ava": "^0.16.0",
-    "babel-cli": "^6.18.0",
-    "babel-plugin-transform-object-rest-spread": "^6.16.0",
-    "babel-preset-es2015": "^6.18.0",
-    "coveralls": "^2.11.14",
-    "eslint": "^3.9.0",
-    "nyc": "^8.3.2",
-    "opn-cli": "^3.1.0",
-    "rimraf": "^2.5.4"
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "lodash": "^4.16.4",
+    "node-fetch": "^1.6.3"
   },
+  "devDependencies": {},
   "publishConfig": {
     "repository": "https://registry.npmjs.org"
-  },
-  "ava": {
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   },
   "license": "MIT",
   "directories": {
