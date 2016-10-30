@@ -165,7 +165,7 @@ degiro.searchProduct({text: 'GOOG'})).then(r => console.log(r));
 - `text` _string_ - Search term. For example: "Netflix" or "NFLX"
 - `productType` _number_ - See `DeGiro.ProductTypes`. Defaults to `all`
 - `sortColumn` _number_ - Column to sory by. For example: `'name'`.
-- `sortType` _number_ -
+- `sortType` _number_
     - DeGiro.SortTypes.**asc**
     - DeGiro.SortTypes.**desc**
 - `limit` _number_ - Results limit. Defaults to 7

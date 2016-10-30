@@ -46,7 +46,7 @@ const create = ({
 
     /**
      * Get current cash funds
-     * @return {Promise<{cashFunds: Cash[]}>}
+     * @return {Promise}
      */
     const getCashFunds = () => {
         return getData({cashFunds: 0}).then(data => {
