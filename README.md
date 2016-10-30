@@ -85,7 +85,7 @@ degiro.buy({
 }).then(r => console.log(r)); // prints the order id
 ```
 
-#### options
+#### Options
 
 - `orderType`: _number_
     - DeGiro.OrderTypes.**limited**
@@ -122,9 +122,55 @@ degiro.sell({
 }).then(r => console.log(r)); // prints the order id
 ```
 
-#### options
+#### Options
 
 Same options as `buy`.
+
+## searchProduct
+
+```javascript
+degiro.login().then(() => degiro.searchProduct({
+    text: 'GOOG',
+}))
+.then(result => console.log(result));
+// { offset: 0,
+//   data: 
+//    [ { vwdIdentifierType: 'issueid',
+//        productTypeId: 1,
+//        symbol: 'GOOGL',
+//        tradable: true,
+//        marketAllowed: true,
+//        sellAmountAllowed: true,
+//        orderBookDepth: 0,
+//        joinOrderAllowed: false,
+//        vwdId: '350009261',
+//        contractSize: 1,
+//        isFund: false,
+//        stopLimitOrderAllowed: true,
+//        putCall: '0',
+//        currency: 'USD',
+//        id: '8066561',
+//        category: 'A',
+//        limitHitOrderAllowed: false,
+//        feedQuality: 'D15',
+//        stoplossAllowed: true,
+//        name: 'ALPHABET INC. - CLASS',
+//        gtcAllowed: true,
+//        exchangeId: '663',
+//        isin: 'US02079K3059' },
+//      ...
+```     
+
+#### Options
+
+- `text` _string_ - Search term. For example: "Netflix" or "NFLX"
+- `productType` _number_ - See `DeGiro.ProductTypes`. Defaults to `all`
+- `sortColumn` _number_ - Column to sory by. For example: `'name'`.
+- `sortType` _number_ -
+    - DeGiro.SortTypes.**asc**
+    - DeGiro.SortTypes.**desc**
+- `limit` _number_ - Results limit. Defaults to 7
+- `offset` _number_ - Results offset. Defaults to 0 
 
 ## License
 
