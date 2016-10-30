@@ -13,7 +13,9 @@
     "lodash": "^4.16.4",
     "node-fetch": "^1.6.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.9.0"
+  },
   "publishConfig": {
     "repository": "https://registry.npmjs.org"
   },
@@ -31,7 +33,8 @@
     "client",
     "stock",
     "market",
-    "broker"
+    "broker",
+    "trading"
   ],
   "bugs": {
     "url": "https://github.com/pladaria/degiro/issues"
