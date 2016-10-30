@@ -31,7 +31,7 @@ You can also provide your user and pass via environment variables:
 
 const DeGiro = require('degiro');
 // now you don't need to provide your credentials
-const degiro = Degiro.create(); 
+const degiro = DeGiro.create(); 
 ```
 
 ### login
@@ -104,8 +104,8 @@ degiro.buy({
     - DeGiro.ProductTypes.**cfds**
     - DeGiro.ProductTypes.**warrants**
 - `timeType`: _number_ 
-    - Degiro.TimeTypes.**day**
-    - Degiro.TimeTypes.**permanent**
+    - DeGiro.TimeTypes.**day**
+    - DeGiro.TimeTypes.**permanent**
 - `price`: _number_  - Required for `limited` and `stopLimited` orders
 - `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders    
 
@@ -129,10 +129,7 @@ Same options as `buy`.
 ## searchProduct
 
 ```javascript
-degiro.login().then(() => degiro.searchProduct({
-    text: 'GOOG',
-}))
-.then(result => console.log(result));
+degiro.searchProduct({text: 'GOOG'})).then(r => console.log(r));
 /*
 { offset: 0,
   data: 
