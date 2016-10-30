@@ -111,7 +111,7 @@ degiro.buy({
 
 ## sell
 
-This example puts a sell order of 15 Apple shares at market price
+This example sets a sell order of 15 Apple shares at market price
 
 ```javascript
 degiro.sell({
@@ -133,32 +133,34 @@ degiro.login().then(() => degiro.searchProduct({
     text: 'GOOG',
 }))
 .then(result => console.log(result));
-// { offset: 0,
-//   data: 
-//    [ { vwdIdentifierType: 'issueid',
-//        productTypeId: 1,
-//        symbol: 'GOOGL',
-//        tradable: true,
-//        marketAllowed: true,
-//        sellAmountAllowed: true,
-//        orderBookDepth: 0,
-//        joinOrderAllowed: false,
-//        vwdId: '350009261',
-//        contractSize: 1,
-//        isFund: false,
-//        stopLimitOrderAllowed: true,
-//        putCall: '0',
-//        currency: 'USD',
-//        id: '8066561',
-//        category: 'A',
-//        limitHitOrderAllowed: false,
-//        feedQuality: 'D15',
-//        stoplossAllowed: true,
-//        name: 'ALPHABET INC. - CLASS',
-//        gtcAllowed: true,
-//        exchangeId: '663',
-//        isin: 'US02079K3059' },
-//      ...
+/*
+{ offset: 0,
+  data: 
+   [ { vwdIdentifierType: 'issueid',
+       productTypeId: 1,
+       symbol: 'GOOGL',
+       tradable: true,
+       marketAllowed: true,
+       sellAmountAllowed: true,
+       orderBookDepth: 0,
+       joinOrderAllowed: false,
+       vwdId: '350009261',
+       contractSize: 1,
+       isFund: false,
+       stopLimitOrderAllowed: true,
+       putCall: '0',
+       currency: 'USD',
+       id: '8066561',
+       category: 'A',
+       limitHitOrderAllowed: false,
+       feedQuality: 'D15',
+       stoplossAllowed: true,
+       name: 'ALPHABET INC. - CLASS',
+       gtcAllowed: true,
+       exchangeId: '663',
+       isin: 'US02079K3059' },
+     ...
+*/
 ```     
 
 #### Options
