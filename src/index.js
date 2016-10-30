@@ -35,6 +35,7 @@ const create = ({
 
     /**
      * Gets data
+     * 
      * @return {Promise}
      */
     const getData = (options = {}) => {
@@ -46,6 +47,7 @@ const create = ({
 
     /**
      * Get current cash funds
+     * 
      * @return {Promise}
      */
     const getCashFunds = () => {
@@ -61,6 +63,7 @@ const create = ({
 
     /**
      * Update client info
+     * 
      * @return {Promise}
      */
     const updateClientInfo = () => {
