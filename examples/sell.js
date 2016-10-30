@@ -6,16 +6,16 @@ const DeGiro = require('..');
 const degiro = DeGiro.create({
     // username: 'your-username',
     // password: 'your-password',
+    debug: true,
 });
 
 degiro.login().then(() => {
-    degiro.buy({
+    degiro.sell({
         orderType: DeGiro.OrderTypes.limited,
         productSymbol: 'AAPL',
         productType: DeGiro.ProductTypes.shares,
-        timeType: DeGiro.TimeTypes.day,
         size: 1,
-        price: 110,
+        price: 115,
     })
     .then(r => console.log(r))
     .catch(err => console.log(err));
