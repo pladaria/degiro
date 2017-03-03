@@ -16,13 +16,13 @@ const create = ({
     password = process.env.DEGIRO_PASS,
     sessionId = process.env.DEGIRO_SID,
     account = process.env.DEGIRO_ACCOUNT,
-    debug = false,    
-} = {}) => {    
+    debug = false,
+} = {}) => {
 
     const log = debug ? (...s) => console.log(...s) : () => {};
 
     const session = {
-        id: sessionId, 
+        id: sessionId,
         account,
     };
 
@@ -35,7 +35,7 @@ const create = ({
 
     /**
      * Gets data
-     * 
+     *
      * @return {Promise}
      */
     const getData = (options = {}) => {
@@ -47,13 +47,13 @@ const create = ({
 
     /**
      * Get current cash funds
-     * 
+     *
      * @return {Promise}
      */
     const getCashFunds = () => {
         return getData({cashFunds: 0}).then(data => {
             if (data.cashFunds && Array.isArray(data.cashFunds.value)) {
-                return {cashFunds: data.cashFunds.value.map(({value}) => 
+                return {cashFunds: data.cashFunds.value.map(({value}) =>
                     omit(fromPairs(value.map(({name, value}) => [name, value])), ['handling', 'currencyCode']))
                 };
             }
@@ -61,9 +61,24 @@ const create = ({
         });
     };
 
+
+    /**
+     * Get portfolio
+     *
+     * @return {Promise}
+     */
+    const getPortfolio = () => {
+        return getData({portfolio: 0}).then(data => {
+            if (data.portfolio && Array.isArray(data.portfolio.value)) {
+                return {portfolio: data.portfolio.value};
+            }
+            throw Error('Bad result: ' + JSON.stringify(data));
+        });
+    };
+
     /**
      * Update client info
-     * 
+     *
      * @return {Promise}
      */
     const updateClientInfo = () => {
@@ -77,7 +92,7 @@ const create = ({
 
     /**
      * Login
-     * 
+     *
      * @return {Promise} Resolves to {sessionId: string}
      */
     const login = () => {
@@ -101,13 +116,13 @@ const create = ({
 
     /**
      * Search product by name and type
-     * 
+     *
      * @param {string} options.text - Search term. For example: "Netflix" or "NFLX"
      * @param {number} options.productType - See ProductTypes. Defaults to ProductTypes.all
      * @param {number} options.sortColumn - Column to sory by. For example: "name". Defaults to `undefined`
      * @param {number} options.sortType - See SortTypes. Defaults to `undefined`
      * @param {number} options.limit - Results limit. Defaults to 7
-     * @param {number} options.offset - Results offset. Defaults to 0 
+     * @param {number} options.offset - Results offset. Defaults to 0
      * @return {Promise} Resolves to {data: Product[]}
      */
     const searchProduct = ({text: searchText, productType = ProductTypes.all, sortColumn, sortType, limit = 7, offset = 0}) => {
@@ -115,12 +130,12 @@ const create = ({
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
         return fetch(`${BASE_URL}/product_search/secure/v4/product/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`)
-        .then(res => res.json());        
+        .then(res => res.json());
     };
 
     /**
      * Check order
-     * 
+     *
      * @param {number} order.action - See Actions
      * @param {number} order.orderType - See OrderTypes
      * @param {string} order.productId
@@ -145,7 +160,7 @@ const create = ({
 
     /**
      * Confirm order
-     * 
+     *
      * @param {Object} options.order - As returned by checkOrder()
      * @param {string} options.confirmationId - As returned by checkOrder()
      * @return {Promise} Resolves to {orderId: string}
@@ -161,10 +176,10 @@ const create = ({
         .then(checkSuccess)
         .then(json => ({orderId: json.orderId}));
     };
-    
+
     /**
      * Returns the first product of a product search response
-     * 
+     *
      * @param {Object} result - Product search result
      * @return {Object} Product record
      */
@@ -177,7 +192,7 @@ const create = ({
 
     /**
      * Buy product
-     * 
+     *
      * @param {number} options.orderType - See OrderTypes
      * @param {string} options.productSymbol - Product symbol. For example: 'AAPL'
      * @param {number} options.productType - See ProductTypes. Defaults to ProductTypes.shares
@@ -195,7 +210,7 @@ const create = ({
 
     /**
      * Sell product
-     * 
+     *
      * @param {number} options.orderType - See OrderTypes
      * @param {string} options.productSymbol - Product symbol. For example: 'AAPL'
      * @param {number} options.productType - See ProductTypes. Defaults to ProductTypes.shares
@@ -219,6 +234,7 @@ const create = ({
         sell,
         getData,
         getCashFunds,
+        getPortfolio,
         // properties
         session,
     };
