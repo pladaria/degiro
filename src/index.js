@@ -1,5 +1,3 @@
-/// <reference path="../typings/index.d.ts" />
-
 const fetch = require('node-fetch');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
