@@ -1,7 +1,7 @@
 const DeGiro = require('..');
 
 // Set your username and password below or run from terminal as:
-// DEGIRO_USER=username DEGIRO_PASS=password node examples/buy.js 
+// DEGIRO_USER=username DEGIRO_PASS=password node examples/buy.js
 
 const degiro = DeGiro.create({
     // username: 'your-username',
@@ -17,6 +17,6 @@ degiro.login().then(() => {
         size: 1,
         price: 115,
     })
-    .then(r => console.log(r))
-    .catch(err => console.log(err));
+    .then(console.log)
+    .catch(console.error);
 });

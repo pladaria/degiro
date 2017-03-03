@@ -8,4 +8,4 @@ const degiro = DeGiro.create({
 degiro.login().then(() => degiro.searchProduct({
     text: 'GOOG',
 }))
-.then(results => console.log(results));
+.then(console.log);

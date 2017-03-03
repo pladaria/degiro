@@ -5,6 +5,6 @@ const degiro = DeGiro.create({
     // password: 'your-password',
 });
 
-degiro.login().then(degiro.getCashFunds)
-.then(console.log)
-.catch(console.error);
+degiro.login().then(degiro.getPortfolio)
+    .then(res => console.log(JSON.stringify(res, null, '  ')))
+    .catch(console.error);
