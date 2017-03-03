@@ -2,7 +2,7 @@
 
 This is an **unnoficial** Node.js API client for [DeGiro](https://www.degiro.co.uk)'s trading platform. Using this module you can easily automate your orders (buy and sell) and get information about orders, funds or products.
 
-DeGiro is Europe's fastest growing online stockbroker. DeGiro distinguishes itself by offering institutional fees to retail investors. 
+DeGiro is Europe's fastest growing online stockbroker. DeGiro distinguishes itself by offering institutional fees to retail investors.
 
 ## Install
 
@@ -27,32 +27,32 @@ You can also provide your user and pass via environment variables:
 
 ```javascript
 // run as:
-// DEGIRO_USER=johndow DEGIRO_PASS=1234 node app.js 
+// DEGIRO_USER=johndow DEGIRO_PASS=1234 node app.js
 
 const DeGiro = require('degiro');
 // now you don't need to provide your credentials
-const degiro = DeGiro.create(); 
+const degiro = DeGiro.create();
 ```
 
 ### login
 
-Performs the login to DeGiro using the username and password and 
+Performs the login to DeGiro using the username and password and
 gets a new session id and the account number.
 
 ```javascript
-degiro.login().then(session => console.log(session)); 
+degiro.login().then(session => console.log(session));
 // prints session info (session id and account number)
 ```
 
 You can reuse your sessions if you provide the id and account number
-via environment variables (`DEGIRO_SID` and `DEGIRO_ACCOUNT`), direct assignment 
+via environment variables (`DEGIRO_SID` and `DEGIRO_ACCOUNT`), direct assignment
 or constructor parameters.
 
 ```javascript
 // set session info via constructor
 const degiro = DeGiro.create({sessionId: '', account: 123456})
 
-// set session assigning session variables 
+// set session assigning session variables
 degiro.session.id = 'your-session-id' ;
 degiro.session.account = 'your-account-number';
 ```
@@ -60,14 +60,37 @@ degiro.session.account = 'your-account-number';
 ### getCashFunds
 
 ```javascript
-degiro.getCashFunds().then(cash => console.log(cash));
+degiro.getCashFunds().then(console.log);
 // {
-//   cashFunds: [ 
+//   cashFunds: [
 //     {id: '2', name: 'EUR', value: 1935.8, valueBaseCurr: 1935.8, rate: 1},
 //     {id: '9885', name: 'USD', value: 0, valueBaseCurr: 0, rate: 0.9102},
 //     ...
 //   ]
 // }
+```
+
+### getPortfolio
+
+```javascript
+degiro.getPortfolio().then(console.log);
+// {
+//   "portfolio": [
+//     {
+//       "name": "positionrow",
+//       "id": 1156604,
+//       "value": [
+//         {
+//           "name": "id",
+//           "value": "1156604",
+//           "isAdded": true
+//         },
+//         {
+//           "name": "product",
+//           "value": "DEUTSCHE BANK AG COMMO",
+//           "isAdded": true
+//         },
+//         ...
 ```
 
 ### buy
@@ -82,7 +105,7 @@ degiro.buy({
     timeType: DeGiro.TimeTypes.permanent,
     size: 10,
     price: 110,
-}).then(r => console.log(r)); // prints the order id
+}).then(console.log); // prints the order id
 ```
 
 #### Options
@@ -93,7 +116,7 @@ degiro.buy({
     - DeGiro.OrderTypes.**stopLoss**
     - DeGiro.OrderTypes.**stopLimited**
 - `productSymbol`: _string_
-- `productType`: _number_ 
+- `productType`: _number_
     - DeGiro.ProductTypes.**shares**
     - DeGiro.ProductTypes.**bonds**
     - DeGiro.ProductTypes.**futures**
@@ -103,7 +126,7 @@ degiro.buy({
     - DeGiro.ProductTypes.**etfs**
     - DeGiro.ProductTypes.**cfds**
     - DeGiro.ProductTypes.**warrants**
-- `timeType`: _number_ 
+- `timeType`: _number_
     - DeGiro.TimeTypes.**day**
     - DeGiro.TimeTypes.**permanent**
 - `price`: _number_  - Required for `limited` and `stopLimited` orders
@@ -119,7 +142,7 @@ degiro.sell({
     productSymbol: 'AAPL',
     productType: DeGiro.ProductTypes.shares,
     size: 15,
-}).then(r => console.log(r)); // prints the order id
+}).then(console.log); // prints the order id
 ```
 
 #### Options
@@ -129,10 +152,10 @@ Same options as `buy`.
 ## searchProduct
 
 ```javascript
-degiro.searchProduct({text: 'GOOG'})).then(r => console.log(r));
+degiro.searchProduct({text: 'GOOG'})).then(console.log);
 /*
 { offset: 0,
-  data: 
+  data:
    [ { vwdIdentifierType: 'issueid',
        productTypeId: 1,
        symbol: 'GOOGL',
@@ -169,7 +192,7 @@ degiro.searchProduct({text: 'GOOG'})).then(r => console.log(r));
     - DeGiro.SortTypes.**asc**
     - DeGiro.SortTypes.**desc**
 - `limit` _number_ - Results limit. Defaults to 7
-- `offset` _number_ - Results offset. Defaults to 0 
+- `offset` _number_ - Results offset. Defaults to 0
 
 ## License
 
