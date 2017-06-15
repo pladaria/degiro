@@ -20,7 +20,7 @@ yarn add degiro
 
 ```javascript
 const DeGiro = require('degiro');
-const degiro = Degiro.create({username: 'johndoe', password: '1234'});
+const degiro = DeGiro.create({username: 'johndoe', password: '1234'});
 ```
 
 You can also provide your user and pass via environment variables:

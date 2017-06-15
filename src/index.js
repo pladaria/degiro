@@ -95,11 +95,16 @@ const create = ({
      */
     const login = () => {
         log('login', username, '********');
-        return fetch(`${BASE_URL}/login/securityCheck`, {
+        return fetch(`${BASE_URL}/login/secure/login`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: querystring.stringify({j_username: username, j_password: password}),
-            redirect: 'manual',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                "username": username,
+                "password": password,
+                "isRedirectToMobile": false,
+                "loginButtonUniversal": "",
+                "queryParams": {"reason": "session_expired"}
+            })
         })
         .then(res => {
             const cookies = parseCookies(res.headers.get('set-cookie') || '');
