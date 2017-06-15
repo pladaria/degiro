@@ -1,3 +1,5 @@
+/// <reference path="../typings/index.d.ts" />
+
 const fetch = require('node-fetch');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
@@ -22,6 +24,7 @@ const create = ({
     const session = {
         id: sessionId,
         account,
+        userToken: null,
     };
 
     const checkSuccess = (res) => {
@@ -61,6 +64,17 @@ const create = ({
 
 
     /**
+     * Get Product Price Details
+     *
+     * @return {Promise}
+     */
+    const getProductPriceDetails = (issueId) => {
+        return fetch(`https://charting.vwdservices.com/hchart/v1/deGiro/data.js?requestid=1&resolution=PT1S&culture=nl-BE&period=P1D&series=issueid%3A${issueId}&series=price%3Aissueid%3A${issueId}&format=json&userToken=${session.userToken}&tz=Europe%2FBrussels`)
+        .then(res => res.json())
+    };
+
+
+    /**
      * Get portfolio
      *
      * @return {Promise}
@@ -83,8 +97,9 @@ const create = ({
         log('updateClientInfo');
         return fetch(`${BASE_URL}/pa/secure/client?sessionId=${session.id}`)
         .then(res => res.json())
-        .then(({intAccount}) => {
+        .then(({intAccount, id}) => {
             session.account = intAccount;
+            session.userToken = id;
         });
     };
 
@@ -238,6 +253,7 @@ const create = ({
         getData,
         getCashFunds,
         getPortfolio,
+        getProductDetails,
         // properties
         session,
     };
