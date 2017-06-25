@@ -6,15 +6,18 @@
   "author": "Pedro Ladaria <pedro.ladaria@gmail.com>",
   "scripts": {
     "lint": "eslint ./src",
-    "test": "echo 'no tests'"
+    "test": "echo 'no tests'",
+    "prettier": "prettier --write --no-bracket-spacing --trailing-comma all --single-quote --list-different --tab-width 4 --print-width 120 ./src/**/*.js"
   },
   "dependencies": {
     "cookie": "^0.3.1",
+    "eslint": "^4.1.0",
     "lodash": "^4.16.4",
     "node-fetch": "^1.6.3"
   },
   "devDependencies": {
-    "eslint": "^3.9.0"
+    "eslint": "^3.9.0",
+    "prettier": "^1.4.4"
   },
   "publishConfig": {
     "repository": "https://registry.npmjs.org"
