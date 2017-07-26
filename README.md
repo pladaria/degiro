@@ -130,9 +130,9 @@ degiro.buy({
     - DeGiro.TimeTypes.**day**
     - DeGiro.TimeTypes.**permanent**
 - `price`: _number_  - Required for `limited` and `stopLimited` orders
-- `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders    
+- `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders
 
-## sell
+### sell
 
 This example sets a sell order of 15 Apple shares at market price
 
@@ -149,7 +149,7 @@ degiro.sell({
 
 Same options as `buy`.
 
-## searchProduct
+### searchProduct
 
 ```javascript
 degiro.searchProduct({text: 'GOOG'})).then(console.log);
@@ -181,7 +181,7 @@ degiro.searchProduct({text: 'GOOG'})).then(console.log);
        isin: 'US02079K3059' },
      ...
 */
-```     
+```
 
 #### Options
 
@@ -193,6 +193,16 @@ degiro.searchProduct({text: 'GOOG'})).then(console.log);
     - DeGiro.SortTypes.**desc**
 - `limit` _number_ - Results limit. Defaults to 7
 - `offset` _number_ - Results offset. Defaults to 0
+
+### askBidPrice
+
+```javascript
+degiro.getAskBidPrice('350009261').then(console.log);
+```
+
+## Examples
+
+See [examples](./examples)
 
 ## License
 
