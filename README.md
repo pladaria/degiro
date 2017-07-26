@@ -204,6 +204,10 @@ degiro.getAskBidPrice('350009261').then(console.log);
 
 See [examples](./examples)
 
+## Contributors
+
+[martijndierckx](https://github.com/martijndierckx)
+
 ## License
 
 MIT
