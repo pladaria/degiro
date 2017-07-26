@@ -66,6 +66,94 @@ const create = (
     };
 
     /**
+     * Create a session at VWD services
+     *
+     * @return {Promise}
+     */
+    const requestVwdSession = (issueId) => {
+        return fetch(`https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`, {
+            method: 'POST',
+            headers: { 'Origin': 'https://trader.degiro.nl' },
+            body: JSON.stringify({
+                "referrer": "https://trader.degiro.nl"
+            })
+        })
+        .then(res => res.json())
+    };
+
+
+    /**
+     * Use VWD session to get latest bid/ask prices for a VWD issue ID
+     *
+     * @return {Promise}
+     */
+    const getAskBidPrice = (issueId, timesChecked) => {
+        timesChecked = timesChecked || 0;
+
+        return requestVwdSession().then(vwdSession => {
+            var checkData = function(res) {
+                timesChecked++;
+                var prices = {};
+
+                //sanity check
+                if(!Array.isArray(res)) {
+                    throw Error('Bad result: ' + JSON.stringify(res));
+                }
+
+                //retry needed?
+                if(res.length == 1 && res[0].m == 'h') {
+                    console.log('retry needed');
+                    if(timesChecked <= 3) {
+                        return getAskBidPrice(issueId, timesChecked);
+                    }
+                    else {
+                        throw Error('Tried 3 times to get data, but nothing was returned: ' + JSON.stringify(res));
+                    }
+                }
+
+                //process incoming data
+                var keys = [];
+                res.forEach(function(row) {
+                    if(row.m == 'a_req') {
+                        if(row.v[0].startsWith(issueId)) {
+                            function smallFirstLetter(string) {
+                                return string.charAt(0).toLowerCase() + string.slice(1);
+                            }
+
+                            var key = smallFirstLetter(row.v[0].slice(issueId.length+1));
+
+                            prices[key] = null;
+                            keys[row.v[1]] = key;
+                        }
+                    }
+                    else if(row.m == 'un' || row.m == 'us') {
+                        prices[keys[row.v[0]]] = row.v[1]
+                    }
+                });
+
+                //check if everything is there
+                if(typeof prices.bidPrice == 'undefined' || typeof prices.askPrice == 'undefined' || typeof prices.lastPrice == 'undefined' || typeof prices.lastTime == 'undefined') {
+                    throw Error('Couldn\'t find all requested info: ' + JSON.stringify(res));
+                }
+
+                return prices;
+            };
+
+            return fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`, {
+                method: 'POST',
+                headers: { 'Origin': 'https://trader.degiro.nl' },
+                body: `{"controlData":"req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);"}`
+            })
+            .then(function(res) {
+                return fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`);
+            })
+            .then(res => res.json())
+            .then(checkData)
+        });
+    };
+
+
+    /**
      * Get portfolio
      *
      * @return {Promise}
@@ -309,6 +397,7 @@ const create = (
         getData,
         getCashFunds,
         getPortfolio,
+        getAskBidPrice,
         // properties
         session,
     };
