@@ -7,6 +7,7 @@ const omit = require('lodash/omit');
 const isNil = require('lodash/isNil');
 const fromPairs = require('lodash/fromPairs');
 const qs = require('querystring');
+const {lcFirst} = require('./utils');
 
 const BASE_URL = 'https://trader.degiro.nl';
 
@@ -43,7 +44,7 @@ const create = (
         const params = querystring.stringify(options);
         log('getData', params);
         return fetch(
-            `${BASE_URL}/trading/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`,
+            `${BASE_URL}/trading_s/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`,
         ).then(res => res.json());
     };
 
@@ -70,70 +71,65 @@ const create = (
      *
      * @return {Promise}
      */
-    const requestVwdSession = (issueId) => {
-        return fetch(`https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`, {
-            method: 'POST',
-            headers: { 'Origin': 'https://trader.degiro.nl' },
-            body: JSON.stringify({
-                "referrer": "https://trader.degiro.nl"
-            })
-        })
-        .then(res => res.json())
+    const requestVwdSession = issueId => {
+        return fetch(
+            `https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`,
+            {
+                method: 'POST',
+                headers: {Origin: 'https://trader.degiro.nl'},
+                body: JSON.stringify({referrer: 'https://trader.degiro.nl'}),
+            },
+        ).then(res => res.json());
     };
-
 
     /**
      * Use VWD session to get latest bid/ask prices for a VWD issue ID
      *
      * @return {Promise}
      */
-    const getAskBidPrice = (issueId, timesChecked) => {
-        timesChecked = timesChecked || 0;
-
-        return requestVwdSession().then(vwdSession => {
-            var checkData = function(res) {
+    const getAskBidPrice = (issueId, timesChecked = 0) =>
+        requestVwdSession().then(vwdSession => {
+            const checkData = res => {
                 timesChecked++;
-                var prices = {};
+                const prices = {};
 
                 //sanity check
-                if(!Array.isArray(res)) {
+                if (!Array.isArray(res)) {
                     throw Error('Bad result: ' + JSON.stringify(res));
                 }
 
                 //retry needed?
-                if(res.length == 1 && res[0].m == 'h') {
+                if (res.length == 1 && res[0].m == 'h') {
                     console.log('retry needed');
-                    if(timesChecked <= 3) {
+                    if (timesChecked <= 3) {
                         return getAskBidPrice(issueId, timesChecked);
-                    }
-                    else {
+                    } else {
                         throw Error('Tried 3 times to get data, but nothing was returned: ' + JSON.stringify(res));
                     }
                 }
 
                 //process incoming data
                 var keys = [];
-                res.forEach(function(row) {
-                    if(row.m == 'a_req') {
-                        if(row.v[0].startsWith(issueId)) {
-                            function smallFirstLetter(string) {
-                                return string.charAt(0).toLowerCase() + string.slice(1);
-                            }
-
-                            var key = smallFirstLetter(row.v[0].slice(issueId.length+1));
-
+                res.forEach(row => {
+                    if (row.m == 'a_req') {
+                        if (row.v[0].startsWith(issueId)) {
+                            var key = lcFirst(row.v[0].slice(issueId.length + 1));
                             prices[key] = null;
                             keys[row.v[1]] = key;
                         }
-                    }
-                    else if(row.m == 'un' || row.m == 'us') {
-                        prices[keys[row.v[0]]] = row.v[1]
+                    } else if (row.m == 'un' || row.m == 'us') {
+                        prices[keys[row.v[0]]] = row.v[1];
                     }
                 });
 
                 //check if everything is there
-                if(typeof prices.bidPrice == 'undefined' || typeof prices.askPrice == 'undefined' || typeof prices.lastPrice == 'undefined' || typeof prices.lastTime == 'undefined') {
-                    throw Error('Couldn\'t find all requested info: ' + JSON.stringify(res));
+                if (
+                    typeof prices.bidPrice == 'undefined' ||
+                    typeof prices.askPrice == 'undefined' ||
+                    typeof prices.lastPrice == 'undefined' ||
+                    typeof prices.lastTime == 'undefined'
+                ) {
+                    throw Error("Couldn't find all requested info: " + JSON.stringify(res));
                 }
 
                 return prices;
@@ -141,17 +137,15 @@ const create = (
 
             return fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`, {
                 method: 'POST',
-                headers: { 'Origin': 'https://trader.degiro.nl' },
-                body: `{"controlData":"req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);"}`
+                headers: {Origin: 'https://trader.degiro.nl'},
+                body: JSON.stringify({
+                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);`,
+                }),
             })
-            .then(function(res) {
-                return fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`);
-            })
-            .then(res => res.json())
-            .then(checkData)
+                .then(() => fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`))
+                .then(res => res.json())
+                .then(checkData);
         });
-    };
-
 
     /**
      * Get portfolio
