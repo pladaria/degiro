@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "test": "echo 'no tests'",
-    "prettier": "prettier --write --no-bracket-spacing --trailing-comma all --single-quote --list-different --tab-width 4 --print-width 120 ./src/**/*.js"
+    "prettier": "prettier --write --no-bracket-spacing --trailing-comma es5 --single-quote --list-different --tab-width 4 --print-width 120 ./src/**/*.js"
   },
   "dependencies": {
     "cookie": "^0.3.1",

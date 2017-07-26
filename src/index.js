@@ -18,7 +18,7 @@ const create = (
         sessionId = process.env.DEGIRO_SID,
         account = process.env.DEGIRO_ACCOUNT,
         debug = false,
-    } = {},
+    } = {}
 ) => {
     const log = debug ? (...s) => console.log(...s) : () => {};
 
@@ -44,7 +44,7 @@ const create = (
         const params = querystring.stringify(options);
         log('getData', params);
         return fetch(
-            `${BASE_URL}/trading_s/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`,
+            `${BASE_URL}/trading/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`
         ).then(res => res.json());
     };
 
@@ -58,7 +58,7 @@ const create = (
             if (data.cashFunds && Array.isArray(data.cashFunds.value)) {
                 return {
                     cashFunds: data.cashFunds.value.map(({value}) =>
-                        omit(fromPairs(value.map(({name, value}) => [name, value])), ['handling', 'currencyCode']),
+                        omit(fromPairs(value.map(({name, value}) => [name, value])), ['handling', 'currencyCode'])
                     ),
                 };
             }
@@ -78,7 +78,7 @@ const create = (
                 method: 'POST',
                 headers: {Origin: 'https://trader.degiro.nl'},
                 body: JSON.stringify({referrer: 'https://trader.degiro.nl'}),
-            },
+            }
         ).then(res => res.json());
     };
 
@@ -235,7 +235,7 @@ const create = (
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
         return fetch(
-            `${BASE_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`,
+            `${BASE_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
         ).then(res => res.json());
     };
 
@@ -268,7 +268,7 @@ const create = (
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
                 body: JSON.stringify(order),
-            },
+            }
         )
             .then(res => res.json())
             .then(checkSuccess)
@@ -290,7 +290,7 @@ const create = (
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
                 body: JSON.stringify(order),
-            },
+            }
         )
             .then(res => res.json())
             .then(checkSuccess)
@@ -341,7 +341,7 @@ const create = (
                     timeType,
                     price,
                     stopPrice,
-                }),
+                })
             )
             .then(confirmOrder);
     };
@@ -377,7 +377,7 @@ const create = (
                     timeType,
                     price,
                     stopPrice,
-                }),
+                })
             )
             .then(confirmOrder);
     };
