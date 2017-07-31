@@ -42,7 +42,7 @@ const create = ({
     const getData = (options = {}) => {
         const params = querystring.stringify(options);
         log('getData', params);
-        return fetch(`${BASE_URL}/trading/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`)
+        return fetch(`${BASE_URL}/trading_s/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`)
         .then(res => res.json());
     };
 
@@ -176,6 +176,20 @@ const create = ({
     };
 
     /**
+     * Get orders
+     *
+     * @return {Promise}
+     */
+    const getOrders = () => {
+        return getData({orders: 0, historicalOrders: 0}).then(data => {
+            if (data.orders && Array.isArray(data.orders.value) && data.historicalOrders && Array.isArray(data.historicalOrders.value)) {
+                return {orders: data.orders.value, historicalOrders: data.historicalOrders.value};
+            }
+            throw Error('Bad result: ' + JSON.stringify(data));
+        });
+    };
+
+    /**
      * Update client info
      *
      * @return {Promise}
@@ -237,8 +251,6 @@ const create = ({
         return fetch(`${BASE_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`)
         .then(res => res.json());
     };
-
-
     
     /**
      * Delete order
@@ -382,6 +394,7 @@ const create = ({
         getAskBidPrice,
         order,
         deleteOrder,
+        getOrders,
         // properties
         session,
     };
