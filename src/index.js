@@ -111,7 +111,6 @@ const create = ({
 
                 //retry needed?
                 if(res.length == 1 && res[0].m == 'h') {
-                    console.log('retry needed');
                     if(timesChecked <= 3) {
                         return getAskBidPrice(issueId, timesChecked);
                     }
@@ -254,7 +253,7 @@ const create = ({
     const checkOrder = (order) => {
         const {buysell, orderType, productId, size, timeType, price, stopPrice} = order;
         log('checkOrder', {buysell, orderType, productId, size, timeType, price, stopPrice});
-        return fetch(`${BASE_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
+        return fetch(`${BASE_URL}/trading_s/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=UTF-8'},
             body: JSON.stringify(order),
@@ -273,7 +272,7 @@ const create = ({
      */
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
-        return fetch(`${BASE_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
+        return fetch(`${BASE_URL}/trading_s/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=UTF-8'},
             body: JSON.stringify(order),
@@ -310,8 +309,7 @@ const create = ({
     const buy = ({orderType, productSymbol, productType = ProductTypes.shares, size, timeType = TimeTypes.day, price, stopPrice}) => {
         return searchProduct({text: productSymbol, productType, limit: 1})
         .then(returnFirstProductResult)
-        .then(({id}) => checkOrder({buysell: Actions.buy, orderType, productId: id, size, timeType, price, stopPrice}))
-        .then(confirmOrder);
+        .then(({id}) => order({buysell: Actions.buy, orderType, productId: id, size, timeType, price, stopPrice}));
     };
 
     /**
@@ -328,7 +326,22 @@ const create = ({
     const sell = ({orderType, productSymbol, productType = ProductTypes.shares, size, timeType = TimeTypes.day, price, stopPrice}) => {
         return searchProduct({text: productSymbol, productType, limit: 1})
         .then(returnFirstProductResult)
-        .then(({id}) => checkOrder({buysell: Actions.sell, orderType, productId: id, size, timeType, price, stopPrice}))
+        .then(({id}) => order({buysell: Actions.sell, orderType, productId: id, size, timeType, price, stopPrice}));
+    };
+
+    /**
+     * Check and place Order
+     *
+     * @param {number} options.buysell - See Actions
+     * @param {number} options.orderType - See OrderTypes
+     * @param {string} options.productId - Product symbol. For example: 'AAPL'
+     * @param {number} options.size - Number of items to buy
+     * @param {number} options.timeType - See TimeTypes. Defaults to TimeTypes.day
+     * @param {number} options.price
+     * @param {number} options.stopPrice
+     */
+    const order = ({buysell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) => {
+        return checkOrder({buysell: buysell, orderType, productId: productId, size, timeType, price, stopPrice})
         .then(confirmOrder);
     };
 
@@ -342,6 +355,7 @@ const create = ({
         getCashFunds,
         getPortfolio,
         getAskBidPrice,
+        order,
         // properties
         session,
     };
