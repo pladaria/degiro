@@ -238,6 +238,31 @@ const create = ({
         .then(res => res.json());
     };
 
+
+    
+    /**
+     * Delete order
+     *
+     * @param {string} order.productId
+     * @return {Promise} Resolves to {status: 0, statusText: "success"}
+     */
+    const deleteOrder = (orderId) => {
+        return fetch(`${BASE_URL}/trading_s/secure/v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json;charset=UTF-8'},
+            body: JSON.stringify(order),
+        })
+        .then(res => res.json())
+        .then(function(res) {
+            if(res.status == 0 && res.statusText == 'success') {
+                return true
+            } else {
+                throw Error('Delete order failed');
+            }
+        });
+    };
+
+
     /**
      * Check order
      *
@@ -356,6 +381,7 @@ const create = ({
         getPortfolio,
         getAskBidPrice,
         order,
+        deleteOrder,
         // properties
         session,
     };
