@@ -183,7 +183,28 @@ const create = ({
     const getOrders = () => {
         return getData({orders: 0, historicalOrders: 0}).then(data => {
             if (data.orders && Array.isArray(data.orders.value) && data.historicalOrders && Array.isArray(data.historicalOrders.value)) {
-                return {orders: data.orders.value, historicalOrders: data.historicalOrders.value};
+                const processOrders = function(orders) {
+                    var res = [];
+
+                    orders.forEach(function(order) {
+                        var o = {
+                            id: order.id
+                        };
+
+                        order.value.forEach(function(orderRow) {
+                            o[orderRow.name] = orderRow.value;
+                        });
+
+                        res.push(o);
+                    });
+
+                    return res;
+                }
+
+                return {
+                    orders: processOrders(data.orders.value),
+                    historicalOrders: processOrders(data.historicalOrders.value)
+                };
             }
             throw Error('Bad result: ' + JSON.stringify(data));
         });
