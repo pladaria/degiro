@@ -192,7 +192,25 @@ const create = ({
                         };
 
                         order.value.forEach(function(orderRow) {
-                            o[orderRow.name] = orderRow.value;
+                            if(orderRow.name == 'date') {
+                                if(orderRow.value.includes(':')) {
+                                    o[orderRow.name] = new Date();
+                                    o[orderRow.name].setHours(orderRow.value.split(':')[0]);
+                                    o[orderRow.name].setMinutes(orderRow.value.split(':')[1]);
+                                    o[orderRow.name].setSeconds(0);
+                                    o[orderRow.name].setMilliseconds(0);
+                                } else if(orderRow.value.includes('/')) {
+                                    var currentDate = new Date();
+                                    var month = orderRow.value.split('/')[1];
+                                    
+                                    o[orderRow.name] = new Date((currentDate.getMonth() < month ? currentDate.getYear() - 1 : currentDate.getYear()), month, orderRow.value.split('/')[0]);
+                                } else {
+                                    throw Error('Unexpected date format: ' + orderRow.value);
+                                }
+                            }
+                            else {
+                                 o[orderRow.name] = orderRow.value;
+                            }
                         });
 
                         res.push(o);
