@@ -181,8 +181,8 @@ const create = ({
      * @return {Promise}
      */
     const getOrders = () => {
-        return getData({orders: 0, historicalOrders: 0}).then(data => {
-            if (data.orders && Array.isArray(data.orders.value) && data.historicalOrders && Array.isArray(data.historicalOrders.value)) {
+        return getData({orders: 0, historicalOrders: 0, transactions: 0}).then(data => {
+            if (data.orders && Array.isArray(data.orders.value) && data.historicalOrders && Array.isArray(data.historicalOrders.value) && data.transactions && Array.isArray(data.transactions.value)) {
                 const processOrders = function(orders) {
                     var res = [];
 
@@ -220,8 +220,9 @@ const create = ({
                 }
 
                 return {
-                    orders: processOrders(data.orders.value),
-                    historicalOrders: processOrders(data.historicalOrders.value)
+                    openOrders: processOrders(data.orders.value),
+                    cancelledOrders: processOrders(data.historicalOrders.value),
+                    completedOrders: processOrders(data.transactions.value)
                 };
             }
             throw Error('Bad result: ' + JSON.stringify(data));
