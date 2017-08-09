@@ -381,6 +381,20 @@ const create = (
             .then(confirmOrder);
     };
 
+    /**
+     * Get multiple products by its IDs
+     *
+     * @param {(number|number[])} ids - ID or Array of IDs of the products to query
+     */
+    const getProductsByIds = (ids) => {
+        if (!Array.isArray(ids)) ids = [ids];
+        return fetch(`${BASE_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(ids.map(id => id.toString())),
+        }).then(res => res.json());
+    };
+
     return {
         // methods
         login,
@@ -393,6 +407,7 @@ const create = (
         getAskBidPrice,
         // properties
         session,
+        getProductsByIds,
     };
 };
 
