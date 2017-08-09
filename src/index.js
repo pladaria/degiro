@@ -6,7 +6,6 @@ const omitBy = require('lodash/omitBy');
 const omit = require('lodash/omit');
 const isNil = require('lodash/isNil');
 const fromPairs = require('lodash/fromPairs');
-const qs = require('querystring');
 const {lcFirst} = require('./utils');
 
 const BASE_URL = 'https://trader.degiro.nl';
@@ -71,7 +70,7 @@ const create = (
      *
      * @return {Promise}
      */
-    const requestVwdSession = issueId => {
+    const requestVwdSession = () => {
         return fetch(
             `https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`,
             {
