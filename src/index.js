@@ -225,9 +225,9 @@ const create = (
     }) => {
         const options = {
             searchText,
-            productType,
-            sortColumn,
-            sortType,
+            productTypeId: productType,
+            sortColumns: sortColumn,
+            sortTypes: sortType,
             limit,
             offset,
         };
