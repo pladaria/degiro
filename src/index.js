@@ -6,7 +6,6 @@ const omitBy = require('lodash/omitBy');
 const omit = require('lodash/omit');
 const isNil = require('lodash/isNil');
 const fromPairs = require('lodash/fromPairs');
-const qs = require('querystring');
 const {lcFirst} = require('./utils');
 
 const BASE_URL = 'https://trader.degiro.nl';
@@ -71,7 +70,7 @@ const create = (
      *
      * @return {Promise}
      */
-    const requestVwdSession = issueId => {
+    const requestVwdSession = () => {
         return fetch(
             `https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`,
             {
@@ -226,9 +225,9 @@ const create = (
     }) => {
         const options = {
             searchText,
-            productType,
-            sortColumn,
-            sortType,
+            productTypeId: productType,
+            sortColumns: sortColumn,
+            sortTypes: sortType,
             limit,
             offset,
         };
@@ -263,7 +262,7 @@ const create = (
             stopPrice,
         });
         return fetch(
-            `${BASE_URL}/trading_s/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -285,7 +284,7 @@ const create = (
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
         return fetch(
-            `${BASE_URL}/trading_s/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -382,6 +381,20 @@ const create = (
             .then(confirmOrder);
     };
 
+    /**
+     * Get multiple products by its IDs
+     *
+     * @param {(number|number[])} ids - ID or Array of IDs of the products to query
+     */
+    const getProductsByIds = (ids) => {
+        if (!Array.isArray(ids)) ids = [ids];
+        return fetch(`${BASE_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(ids.map(id => id.toString())),
+        }).then(res => res.json());
+    };
+
     return {
         // methods
         login,
@@ -394,6 +407,7 @@ const create = (
         getAskBidPrice,
         // properties
         session,
+        getProductsByIds,
     };
 };
 
