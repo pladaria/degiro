@@ -25,6 +25,7 @@ const create = (
         id: sessionId,
         account,
         userToken: null,
+        clientInfo: null,
     };
 
     const checkSuccess = res => {
@@ -169,11 +170,19 @@ const create = (
         log('updateClientInfo');
         return fetch(`${BASE_TRADER_URL}/pa/secure/client?sessionId=${session.id}`)
             .then(res => res.json())
-            .then(({intAccount, id}) => {
-                session.account = intAccount;
-                session.userToken = id;
+            .then(clientInfo => {
+                session.account = clientInfo.intAccount;
+                session.userToken = clientInfo.id;
+                this.clientInfo = clientInfo;
             });
     };
+
+    /**
+     * Get client info
+     *
+     * @return Client info
+     */
+    const getClientInfo = () => this.clientInfo;
 
     /**
      * Login
@@ -201,8 +210,7 @@ const create = (
                 }
             })
             .then(updateClientInfo)
-            .then(() => session)
-            .catch(console.log);
+            .then(() => session);
     };
 
     /**
@@ -408,9 +416,10 @@ const create = (
         getCashFunds,
         getPortfolio,
         getAskBidPrice,
+        getProductsByIds,
+        getClientInfo,
         // properties
         session,
-        getProductsByIds,
     };
 };
 

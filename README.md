@@ -212,7 +212,8 @@ See [examples](./examples)
 
 ## Contributors
 
-[martijndierckx](https://github.com/martijndierckx)
+- [martijndierckx](https://github.com/martijndierckx)
+- [Drag0s](https://github.com/Drag0s)
 
 ## License
 
