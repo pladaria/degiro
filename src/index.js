@@ -8,7 +8,7 @@ const isNil = require('lodash/isNil');
 const fromPairs = require('lodash/fromPairs');
 const {lcFirst} = require('./utils');
 
-const BASE_URL = 'https://trader.degiro.nl';
+const BASE_TRADER_URL = 'https://trader.degiro.nl';
 
 const create = (
     {
@@ -16,7 +16,7 @@ const create = (
         password = process.env.DEGIRO_PASS,
         sessionId = process.env.DEGIRO_SID,
         account = process.env.DEGIRO_ACCOUNT,
-        debug = false,
+        debug = !!process.env.DEGIRO_DEBUG,
     } = {}
 ) => {
     const log = debug ? (...s) => console.log(...s) : () => {};
@@ -43,7 +43,7 @@ const create = (
         const params = querystring.stringify(options);
         log('getData', params);
         return fetch(
-            `${BASE_URL}/trading/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`
+            `${BASE_TRADER_URL}/trading/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`
         ).then(res => res.json());
     };
 
@@ -167,7 +167,7 @@ const create = (
      */
     const updateClientInfo = () => {
         log('updateClientInfo');
-        return fetch(`${BASE_URL}/pa/secure/client?sessionId=${session.id}`)
+        return fetch(`${BASE_TRADER_URL}/pa/secure/client?sessionId=${session.id}`)
             .then(res => res.json())
             .then(({intAccount, id}) => {
                 session.account = intAccount;
@@ -182,7 +182,7 @@ const create = (
      */
     const login = () => {
         log('login', username, '********');
-        return fetch(`${BASE_URL}/login/secure/login`, {
+        return fetch(`${BASE_TRADER_URL}/login/secure/login`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -201,7 +201,8 @@ const create = (
                 }
             })
             .then(updateClientInfo)
-            .then(() => session);
+            .then(() => session)
+            .catch(console.log);
     };
 
     /**
@@ -234,7 +235,7 @@ const create = (
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
         return fetch(
-            `${BASE_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
+            `${BASE_TRADER_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
         ).then(res => res.json());
     };
 
@@ -262,7 +263,7 @@ const create = (
             stopPrice,
         });
         return fetch(
-            `${BASE_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_TRADER_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -284,7 +285,7 @@ const create = (
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
         return fetch(
-            `${BASE_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_TRADER_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -388,7 +389,7 @@ const create = (
      */
     const getProductsByIds = (ids) => {
         if (!Array.isArray(ids)) ids = [ids];
-        return fetch(`${BASE_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
+        return fetch(`${BASE_TRADER_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(ids.map(id => id.toString())),
