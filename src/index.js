@@ -385,10 +385,12 @@ const create = (
     /**
      * Get multiple products by its IDs
      *
-     * @param {(number|number[])} ids - ID or Array of IDs of the products to query
+     * @param {(string|string[])} ids - ID or Array of IDs of the products to query
      */
     const getProductsByIds = (ids) => {
-        if (!Array.isArray(ids)) ids = [ids];
+        if (!Array.isArray(ids)) {
+            ids = [ids];
+        }
         return fetch(`${BASE_TRADER_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},

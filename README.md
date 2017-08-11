@@ -200,6 +200,12 @@ degiro.searchProduct({text: 'GOOG'})).then(console.log);
 degiro.getAskBidPrice('350009261').then(console.log);
 ```
 
+### getProductsById
+
+```javascript
+degiro.getProductsByIds(['8066561', '350009261'])).then(console.log);
+```
+
 ## Examples
 
 See [examples](./examples)

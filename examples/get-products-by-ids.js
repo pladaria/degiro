@@ -5,7 +5,5 @@ const degiro = DeGiro.create({
     // password: 'your-password',
 });
 
-degiro.login().then(() => degiro.searchProduct({
-    text: 'AAPL',
-}))
+degiro.login().then(() => degiro.getProductsByIds(['8066561', '331868']))
     .then(console.log);
