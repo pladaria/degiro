@@ -204,7 +204,19 @@ degiro.getAskBidPrice('350009261').then(console.log);
 
 ```javascript
 degiro.getProductsByIds(['8066561', '350009261'])).then(console.log);
+// displays product details
 ```
+
+### getClientInfo
+
+Requests client info (name, email, address, role, etc) to the server and updates the session information
+
+```javascript
+degiro.getClientInfo().then(console.log);
+// displays client information
+```
+
+You can also access this information in `degiro.session.clientInfo` after a successful login
 
 ## Examples
 

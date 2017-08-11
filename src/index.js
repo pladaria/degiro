@@ -162,27 +162,19 @@ const create = (
     };
 
     /**
-     * Update client info
+     * Get client info
      *
      * @return {Promise}
      */
-    const updateClientInfo = () => {
-        log('updateClientInfo');
-        return fetch(`${BASE_TRADER_URL}/pa/secure/client?sessionId=${session.id}`)
+    const getClientInfo = () =>
+        fetch(`${BASE_TRADER_URL}/pa/secure/client?sessionId=${session.id}`)
             .then(res => res.json())
             .then(clientInfo => {
                 session.account = clientInfo.intAccount;
                 session.userToken = clientInfo.id;
-                this.clientInfo = clientInfo;
+                session.clientInfo = clientInfo;
+                return clientInfo;
             });
-    };
-
-    /**
-     * Get client info
-     *
-     * @return Client info
-     */
-    const getClientInfo = () => this.clientInfo;
 
     /**
      * Login
@@ -209,7 +201,7 @@ const create = (
                     throw Error('Login error');
                 }
             })
-            .then(updateClientInfo)
+            .then(getClientInfo)
             .then(() => session);
     };
 
