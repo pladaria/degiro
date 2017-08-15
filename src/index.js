@@ -347,6 +347,35 @@ const create = (
     };
 
     /**
+     * Buy product by its id
+     *
+     * @param {number} orderType - See OrderTypes
+     * @param {string} productId - DeGiro product id
+     * @param {number} size - Number of items to buy
+     * @param {number} timeType - See TimeTypes. Defaults to TimeTypes.day
+     * @param {number} price
+     * @param {number} stopPrice
+     */
+    const buyByProductId = ({
+        orderType,
+        productId,
+        size,
+        timeType = TimeTypes.day,
+        price,
+        stopPrice,
+    }) => {
+        return checkOrder({
+            buysell: Actions.buy,
+            orderType,
+            productId: productId.toString(),
+            size,
+            timeType,
+            price,
+            stopPrice,
+        }).then(confirmOrder);
+    };
+
+    /**
      * Sell product
      *
      * @param {number} options.orderType - See OrderTypes
@@ -383,6 +412,35 @@ const create = (
     };
 
     /**
+     * Sell product
+     *
+     * @param {number} orderType - See OrderTypes
+     * @param {string} productId - DeGiro product id
+     * @param {number} size - Number of items to buy
+     * @param {number} timeType - See TimeTypes. Defaults to TimeTypes.day
+     * @param {number} price
+     * @param {number} stopPrice
+     */
+    const sellByProductId = ({
+        orderType,
+        productId,
+        size,
+        timeType = TimeTypes.day,
+        price,
+        stopPrice,
+    }) => {
+        return checkOrder({
+            buysell: Actions.sell,
+            orderType,
+            productId: productId.toString(),
+            size,
+            timeType,
+            price,
+            stopPrice,
+        }).then(confirmOrder);
+    };
+
+    /**
      * Get multiple products by its IDs
      *
      * @param {(string|string[])} ids - ID or Array of IDs of the products to query
@@ -403,7 +461,9 @@ const create = (
         login,
         searchProduct,
         buy,
+        buyByProductId,
         sell,
+        sellByProductId,
         getData,
         getCashFunds,
         getPortfolio,

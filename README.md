@@ -132,6 +132,34 @@ degiro.buy({
 - `price`: _number_  - Required for `limited` and `stopLimited` orders
 - `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders
 
+### buyByProductId
+
+This example sets a permanent buy order 10 Apple shares from NASDAQ exchange by `productId` at a fixed price of $110
+
+```javascript
+degiro.buyByProductId({
+    orderType: DeGiro.OrderTypes.limited,
+    productId: '331868',
+    timeType: DeGiro.TimeTypes.permanent,
+    size: 10,
+    price: 110,
+}).then(console.log); // prints the order id
+```
+
+#### Options
+
+- `orderType`: _number_
+    - DeGiro.OrderTypes.**limited**
+    - DeGiro.OrderTypes.**marketOrder**
+    - DeGiro.OrderTypes.**stopLoss**
+    - DeGiro.OrderTypes.**stopLimited**
+- `productId`: _string_
+- `timeType`: _number_
+    - DeGiro.TimeTypes.**day**
+    - DeGiro.TimeTypes.**permanent**
+- `price`: _number_  - Required for `limited` and `stopLimited` orders
+- `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders
+
 ### sell
 
 This example sets a sell order of 15 Apple shares at market price
@@ -145,9 +173,26 @@ degiro.sell({
 }).then(console.log); // prints the order id
 ```
 
+
 #### Options
 
-Same options as `buy`.
+Same options as [buy](#buy).
+
+### sellByProductId
+
+This example sets a sell order of 15 Apple shares from NASDAQ exchange at market price by its DeGiro `productId`
+
+```javascript
+degiro.sell({
+    orderType: DeGiro.OrderTypes.marketOrder,
+    productId: '331868',
+    size: 15,
+}).then(console.log); // prints the order id
+```
+
+#### Options
+
+Same options as [buyByProductId](#buybyproductid).
 
 ### searchProduct
 
