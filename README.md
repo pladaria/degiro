@@ -192,7 +192,7 @@ degiro.sell({
 
 #### Options
 
-Same options as [buyByProductId](#buyByProductId).
+Same options as [buyByProductId](#buybyproductid).
 
 ### searchProduct
 
