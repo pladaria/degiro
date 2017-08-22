@@ -17,6 +17,6 @@ degiro.login().then(() => {
         size: 1,
         price: 115,
     })
-    .then(console.log)
-    .catch(console.error);
+        .then(console.log)
+        .catch(console.error);
 });
