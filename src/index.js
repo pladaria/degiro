@@ -288,7 +288,7 @@ const create = ({
         const options = {searchText, productType, sortColumn, sortType, limit, offset};
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
-        return fetch(`${BASE_URL}/product_search/secure/v4/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`)
+        return fetch(`${BASE_URL}/products_s/secure/v5/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`)
         .then(res => res.json());
     };
     
