@@ -99,8 +99,8 @@ const create = (
                 }
 
                 //retry needed?
-                if(res.length == 1 && res[0].m == 'h') {
-                    if(timesChecked <= 3) {
+                if (res.length == 1 && res[0].m == 'h') {
+                    if (timesChecked <= 3) {
                         return getAskBidPrice(issueId, timesChecked);
                     } else {
                         throw Error('Tried 3 times to get data, but nothing was returned: ' + JSON.stringify(res));
@@ -167,34 +167,46 @@ const create = (
      */
     const getOrders = () => {
         return getData({orders: 0, historicalOrders: 0, transactions: 0}).then(data => {
-            if (data.orders && Array.isArray(data.orders.value) && data.historicalOrders && Array.isArray(data.historicalOrders.value) && data.transactions && Array.isArray(data.transactions.value)) {
+            if (
+                data.orders &&
+                Array.isArray(data.orders.value) &&
+                data.historicalOrders &&
+                Array.isArray(data.historicalOrders.value) &&
+                data.transactions &&
+                Array.isArray(data.transactions.value)
+            ) {
                 const processOrders = function(orders) {
                     var res = [];
 
                     orders.forEach(function(order) {
                         var o = {
-                            id: order.id
+                            id: order.id,
                         };
 
                         order.value.forEach(function(orderRow) {
-                            if(orderRow.name == 'date') {
-                                if(orderRow.value.includes(':')) {
+                            if (orderRow.name == 'date') {
+                                if (orderRow.value.includes(':')) {
                                     o[orderRow.name] = new Date();
                                     o[orderRow.name].setHours(orderRow.value.split(':')[0]);
                                     o[orderRow.name].setMinutes(orderRow.value.split(':')[1]);
                                     o[orderRow.name].setSeconds(0);
                                     o[orderRow.name].setMilliseconds(0);
-                                } else if(orderRow.value.includes('/')) {
+                                } else if (orderRow.value.includes('/')) {
                                     var currentDate = new Date();
                                     var month = orderRow.value.split('/')[1];
-                                    
-                                    o[orderRow.name] = new Date((currentDate.getMonth() < month ? currentDate.getYear() - 1 : currentDate.getYear()), month, orderRow.value.split('/')[0]);
+
+                                    o[orderRow.name] = new Date(
+                                        currentDate.getMonth() < month
+                                            ? currentDate.getYear() - 1
+                                            : currentDate.getYear(),
+                                        month,
+                                        orderRow.value.split('/')[0]
+                                    );
                                 } else {
                                     throw Error('Unexpected date format: ' + orderRow.value);
                                 }
-                            }
-                            else {
-                                 o[orderRow.name] = orderRow.value;
+                            } else {
+                                o[orderRow.name] = orderRow.value;
                             }
                         });
 
@@ -202,12 +214,12 @@ const create = (
                     });
 
                     return res;
-                }
+                };
 
                 return {
                     openOrders: processOrders(data.orders.value),
                     cancelledOrders: processOrders(data.historicalOrders.value),
-                    completedOrders: processOrders(data.transactions.value)
+                    completedOrders: processOrders(data.transactions.value),
                 };
             }
             throw Error('Bad result: ' + JSON.stringify(data));
@@ -253,6 +265,7 @@ const create = (
                 if (!session.id) {
                     throw Error('Login error');
                 }
+                log('login Ok:', session.id);
             })
             .then(getClientInfo)
             .then(() => session);
@@ -291,29 +304,31 @@ const create = (
             `${BASE_TRADER_URL}/products_s/secure/v5/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
         ).then(res => res.json());
     };
-    
+
     /**
      * Delete order
      *
      * @param {string} order.productId
      * @return {Promise} Resolves to {status: 0, statusText: "success"}
      */
-    const deleteOrder = (orderId) => {
-        return fetch(`${BASE_TRADER_URL}/trading_s/secure/v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`, {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json;charset=UTF-8'},
-            body: JSON.stringify(order),
-        })
-        .then(res => res.json())
-        .then(function(res) {
-            if(res.status == 0 && res.statusText == 'success') {
-                return true
-            } else {
-                throw Error('Delete order failed');
+    const deleteOrder = orderId => {
+        return fetch(
+            `${BASE_TRADER_URL}/trading_s/secure/v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json;charset=UTF-8'},
+                body: JSON.stringify(order),
             }
-        });
+        )
+            .then(res => res.json())
+            .then(function(res) {
+                if (res.status == 0 && res.statusText == 'success') {
+                    return true;
+                } else {
+                    throw Error('Delete order failed');
+                }
+            });
     };
-
 
     /**
      * Check order
@@ -327,7 +342,7 @@ const create = (
      * @param {number} order.stopPrice - Required for stopLoss and stopLimited orders
      * @return {Promise} Resolves to {order: Object, confirmationId: string}
      */
-    const checkOrder = order => {
+    const checkOrder = (order) => {
         const {buysell, orderType, productId, size, timeType, price, stopPrice} = order;
         log('checkOrder', {
             buysell,
@@ -338,8 +353,9 @@ const create = (
             price,
             stopPrice,
         });
+        log(session);
         return fetch(
-            `${BASE_TRADER_URL}/trading_s/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_TRADER_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -361,7 +377,7 @@ const create = (
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
         return fetch(
-            `${BASE_TRADER_URL}/trading_s/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_TRADER_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -374,131 +390,48 @@ const create = (
     };
 
     /**
-     * Returns the first product of a product search response
-     *
-     * @param {Object} result - Product search result
-     * @return {Object} Product record
-     */
-    const returnFirstProductResult = result => {
-        if (Array.isArray(result.data) && result.data.length) {
-            return result.data[0];
-        }
-        throw new Error('Product not found');
-    };
-
-    /**
-     * Buy product
-     *
-     * @param {number} options.orderType - See OrderTypes
-     * @param {string} options.productSymbol - Product symbol. For example: 'AAPL'
-     * @param {number} options.productType - See ProductTypes. Defaults to ProductTypes.shares
-     * @param {number} options.size - Number of items to buy
-     * @param {number} options.timeType - See TimeTypes. Defaults to TimeTypes.day
-     * @param {number} options.price
-     * @param {number} options.stopPrice
-     */
-    const buy = ({
-        orderType,
-        productSymbol,
-        productType = ProductTypes.shares,
-        size,
-        timeType = TimeTypes.day,
-        price,
-        stopPrice,
-    }) => {
-        return searchProduct({text: productSymbol, productType, limit: 1})
-            .then(returnFirstProductResult)
-            .then(({id}) =>
-                order({
-                    buysell: Actions.buy,
-                    orderType,
-                    productId: id,
-                    size,
-                    timeType,
-                    price,
-                    stopPrice,
-                })
-            );
-    };
-
-    /**
-     * Sell product
-     *
-     * @param {number} options.orderType - See OrderTypes
-     * @param {string} options.productSymbol - Product symbol. For example: 'AAPL'
-     * @param {number} options.productType - See ProductTypes. Defaults to ProductTypes.shares
-     * @param {number} options.size - Number of items to buy
-     * @param {number} options.timeType - See TimeTypes. Defaults to TimeTypes.day
-     * @param {number} options.price
-     * @param {number} options.stopPrice
-     */
-    const sell = ({
-        orderType,
-        productSymbol,
-        productType = ProductTypes.shares,
-        size,
-        timeType = TimeTypes.day,
-        price,
-        stopPrice,
-    }) => {
-        return searchProduct({text: productSymbol, productType, limit: 1})
-            .then(returnFirstProductResult)
-            .then(({id}) =>
-                order({
-                    buysell: Actions.buy,
-                    orderType,
-                    productId: id,
-                    size,
-                    timeType,
-                    price,
-                    stopPrice,
-                })
-            );
-    };
-
-    /**
      * Check and place Order
      *
      * @param {number} options.buysell - See Actions
      * @param {number} options.orderType - See OrderTypes
-     * @param {string} options.productId - Product symbol. For example: 'AAPL'
+     * @param {string} options.productId - Product id
      * @param {number} options.size - Number of items to buy
      * @param {number} options.timeType - See TimeTypes. Defaults to TimeTypes.day
      * @param {number} options.price
      * @param {number} options.stopPrice
      */
-    const order = ({buysell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) => {
-        return checkOrder({buysell: buysell, orderType, productId: productId, size, timeType, price, stopPrice})
-        .then(confirmOrder);
-    };
+    const setOrder = ({buysell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) =>
+        checkOrder({buysell, orderType, productId, size, timeType, price, stopPrice})
+            .then(confirmOrder);
 
     /**
      * Get multiple products by its IDs
      *
      * @param {(string|string[])} ids - ID or Array of IDs of the products to query
      */
-    const getProductsByIds = (ids) => {
+    const getProductsByIds = ids => {
         if (!Array.isArray(ids)) {
             ids = [ids];
         }
-        return fetch(`${BASE_TRADER_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(ids.map(id => id.toString())),
-        }).then(res => res.json());
+        return fetch(
+            `${BASE_TRADER_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`,
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(ids.map(id => id.toString())),
+            }
+        ).then(res => res.json());
     };
 
     return {
         // methods
         login,
         searchProduct,
-        buy,
-        sell,
         getData,
         getCashFunds,
         getPortfolio,
         getAskBidPrice,
-        order,
+        setOrder,
         deleteOrder,
         getOrders,
         getProductsByIds,

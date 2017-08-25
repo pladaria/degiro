@@ -9,14 +9,12 @@ const degiro = DeGiro.create({
     debug: true,
 });
 
-degiro.login().then(() => {
-    degiro.sell({
-        orderType: DeGiro.OrderTypes.limited,
-        productSymbol: 'AAPL',
-        productType: DeGiro.ProductTypes.shares,
-        size: 1,
-        price: 115,
+degiro.login().then(() =>
+    degiro.setOrder({
+        buysell: DeGiro.Actions.sell,
+        orderType: DeGiro.OrderTypes.marketOrder,
+        productId: '8066561',
+        size: 15,
     })
         .then(console.log)
-        .catch(console.error);
-});
+        .catch(console.error));
