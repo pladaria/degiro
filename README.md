@@ -4,6 +4,8 @@ This is an **unnoficial** Node.js API client for [DeGiro](https://www.degiro.co.
 
 DeGiro is Europe's fastest growing online stockbroker. DeGiro distinguishes itself by offering institutional fees to retail investors.
 
+:warning: DeGiro could change their API at any moment, if something is not working, please open an issue.
+
 ## Install
 
 ```bash
@@ -93,61 +95,46 @@ degiro.getPortfolio().then(console.log);
 //         ...
 ```
 
-### buy
+### setOrder (buy/sell)
 
-This example sets a permanent buy order 10 Apple shares at a fixed price of $110
+This example sets a permanent buy order 10 Google shares at a fixed price of $900
 
 ```javascript
-degiro.buy({
+degiro.setOrder({
+    buysell: DeGiro.Actions.buy,
     orderType: DeGiro.OrderTypes.limited,
-    productSymbol: 'AAPL',
-    productType: DeGiro.ProductTypes.shares,
+    productId: '8066561',
     timeType: DeGiro.TimeTypes.permanent,
     size: 10,
-    price: 110,
+    price: 900,
 }).then(console.log); // prints the order id
 ```
 
-#### Options
+This example sets a sell order of 5 Google shares at market price
+
+```javascript
+degiro.setOrder({
+    buysell: DeGiro.Actions.sell,
+    orderType: DeGiro.OrderTypes.marketOrder,
+    productId: '8066561',
+    size: 15,
+}).then(console.log); // prints the order id
+```
+
+#### Order options
 
 - `orderType`: _number_
     - DeGiro.OrderTypes.**limited**
     - DeGiro.OrderTypes.**marketOrder**
     - DeGiro.OrderTypes.**stopLoss**
     - DeGiro.OrderTypes.**stopLimited**
-- `productSymbol`: _string_
-- `productType`: _number_
-    - DeGiro.ProductTypes.**shares**
-    - DeGiro.ProductTypes.**bonds**
-    - DeGiro.ProductTypes.**futures**
-    - DeGiro.ProductTypes.**options**
-    - DeGiro.ProductTypes.**investmendFunds**
-    - DeGiro.ProductTypes.**leveragedProducts**
-    - DeGiro.ProductTypes.**etfs**
-    - DeGiro.ProductTypes.**cfds**
-    - DeGiro.ProductTypes.**warrants**
+- `productId`: _string_
 - `timeType`: _number_
     - DeGiro.TimeTypes.**day**
     - DeGiro.TimeTypes.**permanent**
 - `price`: _number_  - Required for `limited` and `stopLimited` orders
+- `size`: _number_ - Order size
 - `stopPrice`: _number_ - Required for `stopLoss` and `stopLimited` orders
-
-### sell
-
-This example sets a sell order of 15 Apple shares at market price
-
-```javascript
-degiro.sell({
-    orderType: DeGiro.OrderTypes.marketOrder,
-    productSymbol: 'AAPL',
-    productType: DeGiro.ProductTypes.shares,
-    size: 15,
-}).then(console.log); // prints the order id
-```
-
-#### Options
-
-Same options as `buy`.
 
 ### searchProduct
 
@@ -183,7 +170,7 @@ degiro.searchProduct({text: 'GOOG'})).then(console.log);
 */
 ```
 
-#### Options
+#### Search options
 
 - `text` _string_ - Search term. For example: "Netflix" or "NFLX"
 - `productType` _number_ - See `DeGiro.ProductTypes`. Defaults to `all`

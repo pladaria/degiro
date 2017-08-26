@@ -8,15 +8,14 @@ const degiro = DeGiro.create({
     // password: 'your-password',
 });
 
-degiro.login().then(() => {
-    degiro.buy({
+degiro.login().then(() =>
+    degiro.setOrder({
+        buysell: DeGiro.Actions.buy,
         orderType: DeGiro.OrderTypes.limited,
-        productSymbol: 'AAPL',
-        productType: DeGiro.ProductTypes.shares,
-        timeType: DeGiro.TimeTypes.day,
+        productId: '8066561', // Google
+        timeType: DeGiro.TimeTypes.permanent,
         size: 1,
-        price: 110,
+        price: 900,
     })
-    .then(console.log)
-    .catch(console.error);
-});
+        .then(console.log)
+        .catch(console.error));
