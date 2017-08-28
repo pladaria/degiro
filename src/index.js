@@ -355,7 +355,7 @@ const create = (
         });
         log(session);
         return fetch(
-            `${BASE_TRADER_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${BASE_TRADER_URL}/trading_s/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
