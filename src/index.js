@@ -28,6 +28,15 @@ const create = (
         clientInfo: null,
     };
 
+    const urls = {
+        paUrl: null,
+        productSearchUrl: null,
+        productTypesUrl: null,
+        reportingUrl: null,
+        tradingUrl: null,
+        vwdQuotecastServiceUrl: null,
+    }
+
     const checkSuccess = res => {
         if (res.status !== 0) {
             throw Error(res.message);
@@ -44,7 +53,7 @@ const create = (
         const params = querystring.stringify(options);
         log('getData', params);
         return fetch(
-            `${BASE_TRADER_URL}/trading_s/secure/v5/update/${session.account};jsessionid=${session.id}?${params}`
+            `${urls.tradingUrl}v5/update/${session.account};jsessionid=${session.id}?${params}`
         ).then(res => res.json());
     };
 
@@ -232,13 +241,33 @@ const create = (
      * @return {Promise}
      */
     const getClientInfo = () =>
-        fetch(`${BASE_TRADER_URL}/pa/secure/client?sessionId=${session.id}`)
+        fetch(`${urls.paUrl}client?sessionId=${session.id}`)
             .then(res => res.json())
             .then(clientInfo => {
                 session.account = clientInfo.intAccount;
                 session.userToken = clientInfo.id;
                 session.clientInfo = clientInfo;
                 return clientInfo;
+            });
+
+
+    /**
+     * Get config
+     *
+     * @return {Promise}
+     */
+    const getConfig = () =>
+        fetch(`${BASE_TRADER_URL}/login/secure/config`, {
+            headers: { 'Cookie': `JSESSIONID=${session.id};` }
+        })
+            .then(res => res.json())
+            .then(res => {
+                urls.paUrl = res.paUrl;
+                urls.productSearchUrl = res.productSearchUrl;
+                urls.productTypesUrl = res.productTypesUrl;
+                urls.reportingUrl = res.reportingUrl;
+                urls.tradingUrl = res.tradingUrl;
+                urls.vwdQuotecastServiceUrl = res.vwdQuotecastServiceUrl;
             });
 
     /**
@@ -267,6 +296,7 @@ const create = (
                 }
                 log('login Ok:', session.id);
             })
+            .then(getConfig)
             .then(getClientInfo)
             .then(() => session);
     };
@@ -301,7 +331,7 @@ const create = (
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
         return fetch(
-            `${BASE_TRADER_URL}/products_s/secure/v5/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
+            `${urls.productSearchUrl}v5/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
         ).then(res => res.json());
     };
 
@@ -313,7 +343,7 @@ const create = (
      */
     const deleteOrder = orderId => {
         return fetch(
-            `${BASE_TRADER_URL}/trading_s/secure/v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -355,7 +385,7 @@ const create = (
         });
         log(session);
         return fetch(
-            `${BASE_TRADER_URL}/trading/secure/v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -377,7 +407,7 @@ const create = (
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
         return fetch(
-            `${BASE_TRADER_URL}/trading/secure/v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -414,7 +444,7 @@ const create = (
             ids = [ids];
         }
         return fetch(
-            `${BASE_TRADER_URL}/product_search/secure/v5/products/info?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.productSearchUrl}v5/products/info?intAccount=${session.account}&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
