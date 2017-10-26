@@ -1,6 +1,6 @@
 # DeGiro API
 
-This is an **unnoficial** Node.js API client for [DeGiro](https://www.degiro.co.uk)'s trading platform. Using this module you can easily automate your orders (buy and sell) and get information about orders, funds or products.
+This is an **unofficial** Node.js API client for [DeGiro](https://www.degiro.co.uk)'s trading platform. Using this module you can easily automate your orders (buy and sell) and get information about orders, funds or products.
 
 DeGiro is Europe's fastest growing online stockbroker. DeGiro distinguishes itself by offering institutional fees to retail investors.
 
