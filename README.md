@@ -101,7 +101,7 @@ This example sets a permanent buy order 10 Google shares at a fixed price of $90
 
 ```javascript
 degiro.setOrder({
-    buysell: DeGiro.Actions.buy,
+    buySell: DeGiro.Actions.buy,
     orderType: DeGiro.OrderTypes.limited,
     productId: '8066561',
     timeType: DeGiro.TimeTypes.permanent,
@@ -114,7 +114,7 @@ This example sets a sell order of 5 Google shares at market price
 
 ```javascript
 degiro.setOrder({
-    buysell: DeGiro.Actions.sell,
+    buySell: DeGiro.Actions.sell,
     orderType: DeGiro.OrderTypes.marketOrder,
     productId: '8066561',
     size: 15,
@@ -213,6 +213,7 @@ See [examples](./examples)
 
 - [martijndierckx](https://github.com/martijndierckx)
 - [Drag0s](https://github.com/Drag0s)
+- [d99kris](https://github.com/d99kris)
 
 ## License
 

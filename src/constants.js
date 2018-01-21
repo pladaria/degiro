@@ -1,6 +1,6 @@
 module.exports.Actions = {
-    buy: 0,
-    sell: 1,
+    buy: 'BUY',
+    sell: 'SELL',
 };
 
 module.exports.OrderTypes = {
