@@ -10,7 +10,7 @@ const degiro = DeGiro.create({
 
 degiro.login().then(() =>
     degiro.setOrder({
-        buysell: DeGiro.Actions.buy,
+        buySell: DeGiro.Actions.buy,
         orderType: DeGiro.OrderTypes.limited,
         productId: '8066561', // Google
         timeType: DeGiro.TimeTypes.permanent,

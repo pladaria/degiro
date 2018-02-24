@@ -11,7 +11,7 @@ const degiro = DeGiro.create({
 
 degiro.login().then(() =>
     degiro.setOrder({
-        buysell: DeGiro.Actions.sell,
+        buySell: DeGiro.Actions.sell,
         orderType: DeGiro.OrderTypes.marketOrder,
         productId: '8066561',
         size: 15,

@@ -373,9 +373,9 @@ const create = (
      * @return {Promise} Resolves to {order: Object, confirmationId: string}
      */
     const checkOrder = (order) => {
-        const {buysell, orderType, productId, size, timeType, price, stopPrice} = order;
+        const {buySell, orderType, productId, size, timeType, price, stopPrice} = order;
         log('checkOrder', {
-            buysell,
+            buySell,
             orderType,
             productId,
             size,
@@ -422,7 +422,7 @@ const create = (
     /**
      * Check and place Order
      *
-     * @param {number} options.buysell - See Actions
+     * @param {number} options.buySell - See Actions
      * @param {number} options.orderType - See OrderTypes
      * @param {string} options.productId - Product id
      * @param {number} options.size - Number of items to buy
@@ -430,8 +430,8 @@ const create = (
      * @param {number} options.price
      * @param {number} options.stopPrice
      */
-    const setOrder = ({buysell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) =>
-        checkOrder({buysell, orderType, productId, size, timeType, price, stopPrice})
+    const setOrder = ({buySell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) =>
+        checkOrder({buySell, orderType, productId, size, timeType, price, stopPrice})
             .then(confirmOrder);
 
     /**
