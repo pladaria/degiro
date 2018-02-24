@@ -1,9 +1,12 @@
 const DeGiro = require('..');
 
-const degiro = DeGiro.create({
-    // username: 'your-username',
-    // password: 'your-password',
-});
+(async () => {
+    const degiro = DeGiro.create({
+        // username: 'your-username',
+        // password: 'your-password',
+    });
 
-degiro.login().then(() => degiro.getProductsByIds(['8066561', '331868']))
-    .then(console.log);
+    await degiro.login();
+
+    console.log(await degiro.getProductsByIds(['8066561', '331868']));
+})();

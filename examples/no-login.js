@@ -8,15 +8,15 @@ const DeGiro = require('..');
 //     3. environment variables
 
 const degiro = DeGiro.create({
-    // sessionId: 'your-session-id',
-    // sessionAccount: your-account-number,
+    // sessionId: 'your session id',
+    // sessionAccount: your session account number,
 });
 
-degiro.login()
-    .then(console.log)
-    .then(degiro.getCashFunds)
-    .then(data => {
-        console.log('EUR:', data.cashFunds.find(cash => cash.name === 'EUR'));
-        console.log('USD:', data.cashFunds.find(cash => cash.name === 'USD'));
-    })
-    .catch(console.error);
+(async () => {
+    try {
+        await degiro.updateConfig(); // needed to update internal configuration
+        console.log(await degiro.getPortfolio());
+    } catch (e) {
+        console.error(e);
+    }
+})();

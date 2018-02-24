@@ -1,11 +1,12 @@
 const DeGiro = require('..');
 
-const degiro = DeGiro.create({
-    // username: 'your-username',
-    // password: 'your-password',
-});
+(async () => {
+    const degiro = DeGiro.create({
+        // username: 'your-username',
+        // password: 'your-password',
+    });
 
-degiro.login().then(() => degiro.searchProduct({
-    text: 'AAPL',
-}))
-    .then(console.log);
+    await degiro.login();
+
+    console.log(await degiro.searchProduct({text: 'AAPL'}));
+})();
