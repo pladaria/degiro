@@ -10,15 +10,13 @@ const {lcFirst} = require('./utils');
 
 const BASE_TRADER_URL = 'https://trader.degiro.nl';
 
-const create = (
-    {
-        username = process.env.DEGIRO_USER,
-        password = process.env.DEGIRO_PASS,
-        sessionId = process.env.DEGIRO_SID,
-        account = process.env.DEGIRO_ACCOUNT,
-        debug = !!process.env.DEGIRO_DEBUG,
-    } = {}
-) => {
+const create = ({
+    username = process.env.DEGIRO_USER,
+    password = process.env.DEGIRO_PASS,
+    sessionId = process.env.DEGIRO_SID,
+    account = +process.env.DEGIRO_ACCOUNT,
+    debug = !!process.env.DEGIRO_DEBUG,
+} = {}) => {
     const log = debug ? (...s) => console.log(...s) : () => {};
 
     const session = {
@@ -35,7 +33,7 @@ const create = (
         reportingUrl: null,
         tradingUrl: null,
         vwdQuotecastServiceUrl: null,
-    }
+    };
 
     const checkSuccess = res => {
         if (res.status !== 0) {
@@ -67,7 +65,10 @@ const create = (
             if (data.cashFunds && Array.isArray(data.cashFunds.value)) {
                 return {
                     cashFunds: data.cashFunds.value.map(({value}) =>
-                        omit(fromPairs(value.map(({name, value}) => [name, value])), ['handling', 'currencyCode'])
+                        omit(fromPairs(value.map(({name, value}) => [name, value])), [
+                            'handling',
+                            'currencyCode',
+                        ])
                     ),
                 };
             }
@@ -82,7 +83,9 @@ const create = (
      */
     const requestVwdSession = () => {
         return fetch(
-            `https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${session.userToken}`,
+            `https://degiro.quotecast.vwdservices.com/CORS/request_session?version=1.0.20170315&userToken=${
+                session.userToken
+            }`,
             {
                 method: 'POST',
                 headers: {Origin: 'https://trader.degiro.nl'},
@@ -112,7 +115,9 @@ const create = (
                     if (timesChecked <= 3) {
                         return getAskBidPrice(issueId, timesChecked);
                     } else {
-                        throw Error('Tried 3 times to get data, but nothing was returned: ' + JSON.stringify(res));
+                        throw Error(
+                            'Tried 3 times to get data, but nothing was returned: ' + JSON.stringify(res)
+                        );
                     }
                 }
 
@@ -250,15 +255,14 @@ const create = (
                 return clientInfo;
             });
 
-
     /**
      * Get config
      *
      * @return {Promise}
      */
-    const getConfig = () =>
+    const updateConfig = () =>
         fetch(`${BASE_TRADER_URL}/login/secure/config`, {
-            headers: { 'Cookie': `JSESSIONID=${session.id};` }
+            headers: {Cookie: `JSESSIONID=${session.id};`},
         })
             .then(res => res.json())
             .then(res => {
@@ -296,7 +300,7 @@ const create = (
                 }
                 log('login Ok:', session.id);
             })
-            .then(getConfig)
+            .then(updateConfig)
             .then(getClientInfo)
             .then(() => session);
     };
@@ -331,7 +335,9 @@ const create = (
         const params = querystring.stringify(omitBy(options, isNil));
         log('searchProduct', params);
         return fetch(
-            `${urls.productSearchUrl}v5/products/lookup?intAccount=${session.account}&sessionId=${session.id}&${params}`
+            `${urls.productSearchUrl}v5/products/lookup?intAccount=${session.account}&sessionId=${
+                session.id
+            }&${params}`
         ).then(res => res.json());
     };
 
@@ -343,11 +349,12 @@ const create = (
      */
     const deleteOrder = orderId => {
         return fetch(
-            `${urls.tradingUrl}v5/order/${orderId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/order/${orderId};jsessionid=${session.id}?intAccount=${
+                session.account
+            }&sessionId=${session.id}`,
             {
                 method: 'DELETE',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
-                body: JSON.stringify(order),
             }
         )
             .then(res => res.json())
@@ -372,7 +379,7 @@ const create = (
      * @param {number} order.stopPrice - Required for stopLoss and stopLimited orders
      * @return {Promise} Resolves to {order: Object, confirmationId: string}
      */
-    const checkOrder = (order) => {
+    const checkOrder = order => {
         const {buySell, orderType, productId, size, timeType, price, stopPrice} = order;
         log('checkOrder', {
             buySell,
@@ -385,7 +392,9 @@ const create = (
         });
         log(session);
         return fetch(
-            `${urls.tradingUrl}v5/checkOrder;jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/checkOrder;jsessionid=${session.id}?intAccount=${
+                session.account
+            }&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -407,7 +416,9 @@ const create = (
     const confirmOrder = ({order, confirmationId}) => {
         log('confirmOrder', {order, confirmationId});
         return fetch(
-            `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${session.account}&sessionId=${session.id}`,
+            `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${
+                session.account
+            }&sessionId=${session.id}`,
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -431,8 +442,7 @@ const create = (
      * @param {number} options.stopPrice
      */
     const setOrder = ({buySell, orderType, productId, size, timeType = TimeTypes.day, price, stopPrice}) =>
-        checkOrder({buySell, orderType, productId, size, timeType, price, stopPrice})
-            .then(confirmOrder);
+        checkOrder({buySell, orderType, productId, size, timeType, price, stopPrice}).then(confirmOrder);
 
     /**
      * Get multiple products by its IDs
@@ -466,6 +476,7 @@ const create = (
         getOrders,
         getProductsByIds,
         getClientInfo,
+        updateConfig,
         // properties
         session,
     };
