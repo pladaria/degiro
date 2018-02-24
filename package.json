@@ -1,6 +1,6 @@
 {
   "name": "degiro",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "DeGiro (unnoficial) API",
   "main": "src/index.js",
   "author": "Pedro Ladaria <pedro.ladaria@gmail.com>",
