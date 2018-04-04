@@ -13,6 +13,7 @@ const BASE_TRADER_URL = 'https://trader.degiro.nl';
 const create = ({
     username = process.env.DEGIRO_USER,
     password = process.env.DEGIRO_PASS,
+    oneTimePassword = process.env.DEGIRO_ONE_TIME_PASS,
     sessionId = process.env.DEGIRO_SID,
     account = +process.env.DEGIRO_ACCOUNT,
     debug = !!process.env.DEGIRO_DEBUG,
@@ -281,17 +282,30 @@ const create = ({
      */
     const login = () => {
         log('login', username, '********');
-        return fetch(`${BASE_TRADER_URL}/login/secure/login`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                username,
-                password,
-                isRedirectToMobile: false,
-                loginButtonUniversal: '',
-                queryParams: {reason: 'session_expired'},
-            }),
-        })
+        let url = `${BASE_TRADER_URL}/login/secure/login`
+        let loginParams = {
+            username,
+            password,
+            isRedirectToMobile: false,
+            loginButtonUniversal: '',
+            queryParams: {reason: 'session_expired'},
+        };
+ 
+        if (oneTimePassword) {
+            log('2fa token', oneTimePassword);
+            url += '/totp';
+            loginParams.oneTimePassword = oneTimePassword;
+        }
+
+        return sendLoginRequest(url, loginParams);
+    }
+ 
+    const sendLoginRequest = (url, params) => {
+        return fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(params),
+            })
             .then(res => {
                 const cookies = parseCookies(res.headers.get('set-cookie') || '');
                 session.id = cookies.JSESSIONID;
