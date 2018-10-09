@@ -130,7 +130,7 @@ degiro
         buySell: DeGiro.Actions.sell,
         orderType: DeGiro.OrderTypes.marketOrder,
         productId: '8066561',
-        size: 15,
+        size: 5,
     })
     .then(console.log); // prints the order id
 ```
