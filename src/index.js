@@ -250,10 +250,11 @@ const create = ({
         fetch(`${urls.paUrl}client?sessionId=${session.id}`)
             .then(res => res.json())
             .then(clientInfo => {
-                session.account = clientInfo.intAccount;
-                session.userToken = clientInfo.id;
-                session.clientInfo = clientInfo;
-                return clientInfo;
+                const data = clientInfo.data;
+                session.account = data.intAccount;
+                session.userToken = data.id;
+                session.clientInfo = data;
+                return data;
             });
 
     /**
