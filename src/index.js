@@ -283,7 +283,7 @@ const create = ({
      */
     const login = () => {
         log('login', username, '********');
-        let url = `${BASE_TRADER_URL}/login/secure/login`
+        let url = `${BASE_TRADER_URL}/login/secure/login`;
         let loginParams = {
             username,
             password,
@@ -291,7 +291,7 @@ const create = ({
             loginButtonUniversal: '',
             queryParams: {reason: 'session_expired'},
         };
- 
+
         if (oneTimePassword) {
             log('2fa token', oneTimePassword);
             url += '/totp';
@@ -299,16 +299,17 @@ const create = ({
         }
 
         return sendLoginRequest(url, loginParams);
-    }
- 
+    };
+
     const sendLoginRequest = (url, params) => {
         return fetch(url, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(params),
-            })
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(params),
+        })
             .then(res => {
                 const cookies = parseCookies(res.headers.get('set-cookie') || '');
+                log({cookies});
                 session.id = cookies.JSESSIONID;
                 if (!session.id) {
                     throw Error('Login error');
