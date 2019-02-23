@@ -37,8 +37,11 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if (res.errors) {
+            let message = '';
+            for (const error of res.errors)
+                message += `\n - ${error.text}`
+            throw Error(message);
         }
         return res;
     };
