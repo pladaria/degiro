@@ -17,8 +17,14 @@ const create = ({
     sessionId = process.env.DEGIRO_SID,
     account = +process.env.DEGIRO_ACCOUNT,
     debug = !!process.env.DEGIRO_DEBUG,
+    logging_function = () => {}
 } = {}) => {
-    const log = debug ? (...s) => console.log(...s) : () => {};
+    const log = (...args) => {
+        logging_function(...args);
+        if (debug) {
+            console.log(...args);
+        }
+    };
 
     const session = {
         id: sessionId,
