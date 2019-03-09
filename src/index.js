@@ -17,8 +17,14 @@ const create = ({
     sessionId = process.env.DEGIRO_SID,
     account = +process.env.DEGIRO_ACCOUNT,
     debug = !!process.env.DEGIRO_DEBUG,
+    logging_function = () => {}
 } = {}) => {
-    const log = debug ? (...s) => console.log(...s) : () => {};
+    const log = (...args) => {
+        logging_function(...args);
+        if (debug) {
+            console.log(...args);
+        }
+    };
 
     const session = {
         id: sessionId,
@@ -37,8 +43,11 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if (res.errors) {
+            let message = '';
+            for (const error of res.errors)
+                message += `\n - ${error.text}`
+            throw Error(message);
         }
         return res;
     };
@@ -375,11 +384,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(function(res) {
-                if (res.status == 0 && res.statusText == 'success') {
-                    return true;
-                } else {
-                    throw Error('Delete order failed');
-                }
+                checkSuccess(res)
             });
     };
 
