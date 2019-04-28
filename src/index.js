@@ -242,6 +242,41 @@ const create = ({
     };
 
     /**
+     * Gets the transactions for a given year or between two dates
+     *
+     * @param {string} options.fromDate - JavaScript Date instance. Defaults to new Date()
+     * @param {string} options.toDate - JavaScript Date instance. Defaults to new Date()
+     * @param {string} options.year - When a year is provided options.fromDate and options.toDate
+     *                              will be set automatically to include all the transactions for the year.
+     * @param {number} options.groupTransactionsByOrder - Groups transactions by order. Defaults to false
+     * @return {Promise}
+     */
+    const getTransactions = (options = {
+        fromDate: new Date(),
+        toDate: new Date(),
+        year: null,
+        groupTransactionsByOrder: false
+    }) => {
+        const formatDate = d =>
+            d.toISOString().slice(0, 10).split("-").reverse().join("/");
+        options.intAccount = session.account;
+        options.sessionId = session.id;
+        // Providing a year will set fromDate and toDate
+        if (options.year) {
+            options.fromDate = new Date(`${options.year}`);
+            options.toDate = new Date(
+                new Date(`${options.year + 1}`) - 3600001
+            );
+        }
+        options.fromDate = formatDate(options.fromDate);
+        options.toDate = formatDate(options.toDate);
+        const params = querystring.stringify(options);
+        log('getTransactions', params);
+        return fetch(`${urls.reportingUrl}/v4/transactions?${params}`)
+            .then(res => res.json());
+    };
+
+    /**
      * Get client info
      *
      * @return {Promise}
@@ -484,6 +519,7 @@ const create = ({
         login,
         searchProduct,
         getData,
+        getTransactions,
         getCashFunds,
         getPortfolio,
         getAskBidPrice,
