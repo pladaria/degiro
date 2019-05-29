@@ -393,7 +393,7 @@ const create = ({
      * @param {number} order.timeType - See TimeTypes
      * @param {number} order.price - Required for limited and stopLimited orders
      * @param {number} order.stopPrice - Required for stopLoss and stopLimited orders
-     * @return {Promise} Resolves to {order: Object, confirmationId: string}
+     * @return {Promise} Resolves to {order: Object, mOmationId: string}
      */
     const checkOrder = order => {
         const {buySell, orderType, productId, size, timeType, price, stopPrice} = order;
@@ -444,6 +444,25 @@ const create = ({
             .then(res => res.json())
             .then(checkSuccess)
             .then(json => ({orderId: json.orderId}));
+    };
+    
+     /**
+     * Cancel order
+     *
+     * @param {string} options.confirmationId - As returned by checkOrder()
+     * @return {Promise} Resolves to {} (empty object, response from Degiro)
+     */
+    const cancelOrder = ({order, confirmationId}) => {
+        log('cancelOrder', {order, confirmationId});
+        return fetch(
+            `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${
+                session.account
+            }&sessionId=${session.id}`,
+            {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json;charset=UTF-8'}
+            }
+        )
     };
 
     /**
