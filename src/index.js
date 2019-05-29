@@ -449,11 +449,11 @@ const create = ({
      /**
      * Cancel order
      *
-     * @param {string} options.confirmationId - As returned by checkOrder()
+     * @param {string} confirmationId - As returned by checkOrder()
      * @return {Promise} Resolves to {} (empty object, response from Degiro)
      */
-    const cancelOrder = ({order, confirmationId}) => {
-        log('cancelOrder', {order, confirmationId});
+    const cancelOrder = (confirmationId) => {
+        log('cancelOrder', confirmationId);
         return fetch(
             `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${
                 session.account
