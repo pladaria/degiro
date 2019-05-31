@@ -463,9 +463,10 @@ const create = ({
                 headers: {'Content-Type': 'application/json;charset=UTF-8'}
             }
         )
+        .then(res => res.json())
     };
 
-    /**
+        /**
      * Check and place Order
      *
      * @param {number} options.buySell - See Actions
@@ -507,6 +508,7 @@ const create = ({
         getPortfolio,
         getAskBidPrice,
         setOrder,
+        cancelOrder,
         deleteOrder,
         getOrders,
         getProductsByIds,
