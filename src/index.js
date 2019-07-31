@@ -1,3 +1,4 @@
+//@flow
 const fetch = require('node-fetch');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
@@ -37,8 +38,8 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if (res.errors !== undefined && res.errors !== null) {
+            throw Error(res.message)
         }
         return res;
     };
@@ -419,7 +420,8 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({order, confirmationId: json.confirmationId}));
+            .then(json => ({order, confirmationId: json.data.confirmationId}));
+            
     };
 
     /**
@@ -443,7 +445,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({orderId: json.orderId}));
+            .then(json => ({orderId: json.data.orderId}));
     };
     
      /**
