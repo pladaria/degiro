@@ -1,3 +1,4 @@
+//@flow
 const fetch = require('node-fetch');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
@@ -37,8 +38,8 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if (res.errors !== undefined && res.errors !== null) {
+            throw Error(res.message)
         }
         return res;
     };
@@ -393,7 +394,7 @@ const create = ({
      * @param {number} order.timeType - See TimeTypes
      * @param {number} order.price - Required for limited and stopLimited orders
      * @param {number} order.stopPrice - Required for stopLoss and stopLimited orders
-     * @return {Promise} Resolves to {order: Object, confirmationId: string}
+     * @return {Promise} Resolves to {order: Object, mOmationId: string}
      */
     const checkOrder = order => {
         const {buySell, orderType, productId, size, timeType, price, stopPrice} = order;
@@ -419,7 +420,8 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({order, confirmationId: json.confirmationId}));
+            .then(json => ({order, confirmationId: json.data.confirmationId}));
+            
     };
 
     /**
@@ -443,10 +445,30 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({orderId: json.orderId}));
+            .then(json => ({orderId: json.data.orderId}));
+    };
+    
+     /**
+     * Cancel order
+     *
+     * @param {string} confirmationId - As returned by checkOrder()
+     * @return {Promise} Resolves to {} (empty object, response from Degiro)
+     */
+    const cancelOrder = (confirmationId) => {
+        log('cancelOrder', confirmationId);
+        return fetch(
+            `${urls.tradingUrl}v5/order/${confirmationId};jsessionid=${session.id}?intAccount=${
+                session.account
+            }&sessionId=${session.id}`,
+            {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json;charset=UTF-8'}
+            }
+        )
+        .then(res => res.json())
     };
 
-    /**
+        /**
      * Check and place Order
      *
      * @param {number} options.buySell - See Actions
@@ -488,6 +510,7 @@ const create = ({
         getPortfolio,
         getAskBidPrice,
         setOrder,
+        cancelOrder,
         deleteOrder,
         getOrders,
         getProductsByIds,
