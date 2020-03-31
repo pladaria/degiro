@@ -153,7 +153,7 @@ const create = ({
                 method: 'POST',
                 headers: {Origin: 'https://trader.degiro.nl'},
                 body: JSON.stringify({
-                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);`,
+                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);req(${issueId}.OpenPrice);req(${issueId}.RelativeDifference);`,
                 }),
             })
                 .then(() => fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`))
