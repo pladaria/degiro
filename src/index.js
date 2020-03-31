@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('./fetch.js');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
 const {Actions, OrderTypes, TimeTypes, ProductTypes, Sort} = require('./constants');
@@ -153,7 +153,7 @@ const create = ({
                 method: 'POST',
                 headers: {Origin: 'https://trader.degiro.nl'},
                 body: JSON.stringify({
-                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);req(${issueId}.OpenPrice);req(${issueId}.RelativeDifference);`,
+                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);req(${issueId}.OpenPrice);req(${issueId}.RelativeDifference);req(${issueId}.AbsoluteDifference);`,
                 }),
             })
                 .then(() => fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`))
