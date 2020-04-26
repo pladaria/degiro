@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('./fetch.js');
 const querystring = require('querystring');
 const parseCookies = require('cookie').parse;
 const {Actions, OrderTypes, TimeTypes, ProductTypes, Sort} = require('./constants');
@@ -37,8 +37,8 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if (res.errors !== undefined && res.errors !== null) {
+            throw Error(res.errors[0].text);
         }
         return res;
     };
@@ -153,7 +153,7 @@ const create = ({
                 method: 'POST',
                 headers: {Origin: 'https://trader.degiro.nl'},
                 body: JSON.stringify({
-                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);`,
+                    controlData: `req(${issueId}.BidPrice);req(${issueId}.AskPrice);req(${issueId}.LastPrice);req(${issueId}.LastTime);req(${issueId}.OpenPrice);req(${issueId}.HighPrice);req(${issueId}.LowPrice);req(${issueId}.RelativeDifference);req(${issueId}.AbsoluteDifference);`,
                 }),
             })
                 .then(() => fetch(`https://degiro.quotecast.vwdservices.com/CORS/${vwdSession.sessionId}`))
@@ -268,12 +268,12 @@ const create = ({
         })
             .then(res => res.json())
             .then(res => {
-                urls.paUrl = res.paUrl;
-                urls.productSearchUrl = res.productSearchUrl;
-                urls.productTypesUrl = res.productTypesUrl;
-                urls.reportingUrl = res.reportingUrl;
-                urls.tradingUrl = res.tradingUrl;
-                urls.vwdQuotecastServiceUrl = res.vwdQuotecastServiceUrl;
+                urls.paUrl = res.data.paUrl;
+                urls.productSearchUrl = res.data.productSearchUrl;
+                urls.productTypesUrl = res.data.productTypesUrl;
+                urls.reportingUrl = res.data.reportingUrl;
+                urls.tradingUrl = res.data.tradingUrl;
+                urls.vwdQuotecastServiceUrl = res.data.vwdQuotecastServiceUrl;
             });
 
     /**
@@ -287,8 +287,8 @@ const create = ({
         let loginParams = {
             username,
             password,
+            isPassCodeReset: false,
             isRedirectToMobile: false,
-            loginButtonUniversal: '',
             queryParams: {reason: 'session_expired'},
         };
 
@@ -419,7 +419,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({order, confirmationId: json.confirmationId}));
+            .then(json => ({order, confirmationId: json.data.confirmationId}));
     };
 
     /**
@@ -443,7 +443,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({orderId: json.orderId}));
+            .then(json => ({orderId: json.data.orderId}));
     };
 
     /**
