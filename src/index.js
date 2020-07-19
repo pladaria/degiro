@@ -268,12 +268,12 @@ const create = ({
         })
             .then(res => res.json())
             .then(res => {
-                urls.paUrl = res.paUrl;
-                urls.productSearchUrl = res.productSearchUrl;
-                urls.productTypesUrl = res.productTypesUrl;
-                urls.reportingUrl = res.reportingUrl;
-                urls.tradingUrl = res.tradingUrl;
-                urls.vwdQuotecastServiceUrl = res.vwdQuotecastServiceUrl;
+                urls.paUrl = res.data.paUrl;
+                urls.productSearchUrl = res.data.productSearchUrl;
+                urls.productTypesUrl = res.data.productTypesUrl;
+                urls.reportingUrl = res.data.reportingUrl;
+                urls.tradingUrl = res.data.tradingUrl;
+                urls.vwdQuotecastServiceUrl = res.data.vwdQuotecastServiceUrl;
             });
 
     /**
