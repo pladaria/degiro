@@ -37,10 +37,11 @@ const create = ({
     };
 
     const checkSuccess = res => {
-        if (res.status !== 0) {
-            throw Error(res.message);
+        if ((typeof res.data.confirmationId !== 'undefined' && res.data.confirmationId !== null && res.data.confirmationId !== '')
+            || (typeof res.data.orderId !== 'undefined' && res.data.orderId !== null && res.data.orderId !== '')) {
+            return res;
         }
-        return res;
+        throw Error(res.message);
     };
 
     /**
@@ -268,12 +269,12 @@ const create = ({
         })
             .then(res => res.json())
             .then(res => {
-                urls.paUrl = res.paUrl;
-                urls.productSearchUrl = res.productSearchUrl;
-                urls.productTypesUrl = res.productTypesUrl;
-                urls.reportingUrl = res.reportingUrl;
-                urls.tradingUrl = res.tradingUrl;
-                urls.vwdQuotecastServiceUrl = res.vwdQuotecastServiceUrl;
+                urls.paUrl = res.data.paUrl;
+                urls.productSearchUrl = res.data.productSearchUrl;
+                urls.productTypesUrl = res.data.productTypesUrl;
+                urls.reportingUrl = res.data.reportingUrl;
+                urls.tradingUrl = res.data.tradingUrl;
+                urls.vwdQuotecastServiceUrl = res.data.vwdQuotecastServiceUrl;
             });
 
     /**
@@ -419,7 +420,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({order, confirmationId: json.confirmationId}));
+            .then(json => ({order, confirmationId: json.data.confirmationId}));
     };
 
     /**
@@ -443,7 +444,7 @@ const create = ({
         )
             .then(res => res.json())
             .then(checkSuccess)
-            .then(json => ({orderId: json.orderId}));
+            .then(json => ({orderId: json.data.orderId}));
     };
 
     /**
